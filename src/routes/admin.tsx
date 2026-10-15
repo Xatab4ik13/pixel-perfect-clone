@@ -100,16 +100,42 @@ function Automation({ ask }: { ask: Ask }) {
   </div>;
 }
 
+const BROADCAST_HISTORY = [
+  { date: "12.10.2026", group: "С истекающей подпиской", text: "Доступ заканчивается через 3 дня — продлите заранее, чтобы не потерять связь.", recipients: 18 },
+  { date: "03.10.2026", group: "На домене «docs.rs»", text: "Домен обновлён, ссылки перевыпущены — бот уже прислал новые.", recipients: 42 },
+  { date: "21.09.2026", group: "Все", text: "Запустили тариф на 12 месяцев: 1 690 ₽ вместо 2 388 ₽.", recipients: 96 },
+];
+
 function Broadcasts({ ask }: { ask: Ask }) {
-  const [group, setGroup] = useState("Все"); const [text, setText] = useState("");
-  return <Card title="Новая рассылка">
-    <label className="block text-xs font-semibold text-muted-foreground">Кому
-      <select value={group} onChange={e => setGroup(e.target.value)} className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground">
-        <option>Все</option><option>С истекающей подпиской</option><option>На определённом домене</option></select></label>
-    <label className="mt-3 block text-xs font-semibold text-muted-foreground">Текст
-      <textarea rows={4} value={text} onChange={e => setText(e.target.value)} className="mt-1 w-full rounded-lg border border-border bg-background p-3 text-sm text-foreground" /></label>
-    <div className="mt-3"><Btn onClick={() => ask(`Отправить рассылку: «${group}»`)}>Отправить</Btn></div>
-  </Card>;
+  const [group, setGroup] = useState("Все"); const [text, setText] = useState(""); const [domain, setDomain] = useState("");
+  return <div className="space-y-4">
+    <Card title="Новая рассылка">
+      <label className="block text-xs font-semibold text-muted-foreground">Кому
+        <select value={group} onChange={e => setGroup(e.target.value)} className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground">
+          <option>Все</option><option>С истекающей подпиской</option><option>На определённом домене</option></select></label>
+      {group === "На определённом домене" && <div className="mt-3"><Field label="Домен" placeholder="docs.rs" value={domain} onChange={e => setDomain(e.target.value)} /></div>}
+      <label className="mt-3 block text-xs font-semibold text-muted-foreground">Текст
+        <textarea rows={4} value={text} onChange={e => setText(e.target.value)} className="mt-1 w-full rounded-lg border border-border bg-background p-3 text-sm text-foreground" /></label>
+      <div className="mt-3">
+        {text.trim()
+          ? <Btn onClick={() => ask(`Отправить рассылку: «${group}${group === "На определённом домене" ? ` — ${domain || "—"}` : ""}»`)}>Отправить</Btn>
+          : <button disabled className="cursor-not-allowed rounded-lg bg-muted px-3 py-2 text-sm font-semibold text-muted-foreground">Отправить</button>}
+      </div>
+      <p className="mt-2 text-xs text-muted-foreground">Без текста кнопка неактивна; отправка всегда спросит подтверждение и причину.</p>
+    </Card>
+    <Card title="История рассылок (пример оформления)">
+      <ul className="space-y-3">
+        {BROADCAST_HISTORY.map((b, i) => (
+          <li key={i} className="rounded-xl border border-border p-4">
+            <div className="flex items-center justify-between text-xs text-muted-foreground"><span>{b.date}</span><span className="rounded-full bg-muted px-2 py-0.5 font-semibold">{b.group}</span></div>
+            <p className="mt-2 text-sm">{b.text}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Получателей: {b.recipients}</p>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 text-xs text-muted-foreground">Это тестовые примеры, чтобы показать оформление. Реальной истории пока нет.</p>
+    </Card>
+  </div>;
 }
 
 function Settings({ ask }: { ask: Ask }) {
