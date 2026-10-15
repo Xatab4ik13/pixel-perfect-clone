@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronRight, Sparkle } from "lucide-react";
+import { Sparkle } from "lucide-react";
 import { AppShell, IconImg, Logo } from "@/components/AppShell";
 import calendar from "@/assets/icon-calendar.png";
 import bolt from "@/assets/icon-bolt.png";
@@ -41,14 +41,10 @@ function Access() {
         <p className="mt-2 text-xs text-muted-foreground">Действует до 12 ноября 2026</p>
       </div>
 
-      <div className="mt-4 flex items-center gap-4 rounded-2xl bg-card p-4 shadow-soft">
-        <IconImg src={bolt} className="h-9 w-9" />
-        <div className="flex-1">
-          <p className="text-sm font-bold">Автоматическое восстановление</p>
-          <p className="text-xs text-muted-foreground">В случае блокировок переключим сами</p>
-        </div>
-        <ChevronRight className="h-5 w-5 text-muted-foreground" />
-      </div>
+      <p className="mt-3 flex items-center gap-2 px-1 text-xs text-muted-foreground">
+        <IconImg src={bolt} className="h-4 w-4" />
+        Автоматическое восстановление: при блокировках переключим сами
+      </p>
 
       <h2 className="mt-8 text-lg font-bold">Продлить доступ</h2>
       <div className="mt-3 space-y-3">

@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import plane from "@/assets/icon-plane.png";
 import tabHome from "@/assets/icon-home.png";
@@ -57,17 +56,4 @@ export function Logo({ small }: { small?: boolean }) {
 
 export function IconImg({ src, className = "h-9 w-9" }: { src: string; className?: string }) {
   return <img src={src} alt="" width={256} height={256} loading="lazy" className={`${className} object-contain`} />;
-}
-
-export function Row({ icon, title, sub }: { icon: string; title: string; sub: string }) {
-  return (
-    <button className="flex w-full items-center gap-4 px-4 py-4 text-left">
-      <IconImg src={icon} className="h-8 w-8" />
-      <span className="flex-1">
-        <span className="block text-sm font-semibold">{title}</span>
-        <span className="block text-xs text-muted-foreground">{sub}</span>
-      </span>
-      <ChevronRight className="h-5 w-5 text-muted-foreground" />
-    </button>
-  );
 }
