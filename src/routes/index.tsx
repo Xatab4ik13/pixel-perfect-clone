@@ -8,6 +8,7 @@ import shield from "@/assets/icon-shield.jpg";
 import calendar from "@/assets/icon-calendar.png";
 import bolt from "@/assets/icon-bolt.png";
 import headset from "@/assets/icon-headset.png";
+import gift from "@/assets/icon-gift.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -64,6 +65,10 @@ function Index() {
           <ChevronRight className="h-5 w-5 text-muted-foreground" />
         </div>
       </Link>
+
+      <Button asChild variant="ghost" className="mt-4 h-auto justify-start rounded-2xl bg-gradient-help p-4 shadow-soft">
+        <Link to="/referrals"><IconImg src={gift} className="h-10 w-10" /><span className="flex-1 text-left"><span className="block font-bold">Пригласить друзей</span><span className="block text-xs font-normal text-muted-foreground">+30 дней за друга на следующий месяц</span></span><ChevronRight /></Link>
+      </Button>
 
       <Link to="/help" className="mt-4 flex items-center gap-4 rounded-2xl bg-gradient-help p-4 shadow-soft">
         <IconImg src={headset} className="h-10 w-10" />
