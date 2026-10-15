@@ -12,3 +12,4 @@
 - Keep frontend demo access in DemoProvider so payment, home and account share the same mock state without auth or database calls.
 - Keep demo plan definitions and payment arithmetic in demo-access so access and payment use one source of truth.
 - Keep the connection instructions in ConnectionGuide so the home action and disclosure share the same content.
+- Keep home benefit artwork in HomeBenefits; homepage tariffs reuse DEMO_PLANS and PaymentSheet to preserve the existing mock checkout flow.
