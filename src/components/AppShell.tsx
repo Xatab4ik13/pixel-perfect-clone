@@ -4,18 +4,20 @@ import plane from "@/assets/icon-plane.png";
 import tabHome from "@/assets/icon-home.png";
 import tabCalendar from "@/assets/icon-tab-calendar.png";
 import tabHelp from "@/assets/icon-tab-help.png";
+import tabProfile from "@/assets/icon-profile.png";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const tabs = [
     { to: "/", label: "Главная", icon: tabHome },
     { to: "/access", label: "Мой доступ", icon: tabCalendar },
     { to: "/help", label: "Помощь", icon: tabHelp },
+    { to: "/profile", label: "Кабинет", icon: tabProfile },
   ] as const;
   return (
     <div className="min-h-screen bg-gradient-sky">
       <div className="mx-auto flex min-h-screen max-w-md flex-col px-5 pb-28 pt-6">{children}</div>
       <nav className="fixed inset-x-0 bottom-0 border-t border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto grid max-w-md grid-cols-3">
+        <div className="mx-auto grid max-w-md grid-cols-4">
           {tabs.map(({ to, label, icon }) => (
             <Link
               key={to}
