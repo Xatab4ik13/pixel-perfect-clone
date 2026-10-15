@@ -14,8 +14,8 @@ export function ConnectionGuide({ expanded = false }: { expanded?: boolean }) {
         <ol className="mt-3 space-y-4 border-l-2 border-primary/20 pl-4">
           {[
             ["Оплатите доступ", "Выберите тариф и завершите оплату."],
-            ["Подтвердите подключение прокси", "Когда появится окно Telegram, нажмите «Подключить прокси»."],
-            ["Вернитесь к переписке", "После подключения отправьте сообщение в «Избранное»."],
+            ["Подтвердите в Telegram", "Когда появится окно, нажмите «Подключить»."],
+            ["Готово", "Возвращайтесь к переписке и наслаждайтесь общением."],
           ].map(([title, detail], index) => <li key={title} className="flex items-start gap-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sky text-xs font-bold text-primary">{index + 1}</span>
             <div><p className="text-sm font-semibold">{title}</p><p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{detail}</p></div>
