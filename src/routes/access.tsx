@@ -11,6 +11,8 @@ export const Route = createFileRoute("/access")({
       { name: "description", content: "Срок действия и продление доступа к Лазейке." },
       { property: "og:title", content: "Мой доступ — Лазейка" },
       { property: "og:description", content: "Срок действия и продление доступа к Лазейке." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Access,

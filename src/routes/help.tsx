@@ -10,6 +10,8 @@ export const Route = createFileRoute("/help")({
       { name: "description", content: "Ответы на частые вопросы о подключении Лазейки." },
       { property: "og:title", content: "Помощь — Лазейка" },
       { property: "og:description", content: "Ответы на частые вопросы о подключении Лазейки." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Help,
@@ -17,7 +19,7 @@ export const Route = createFileRoute("/help")({
 
 const faq = [
   ["Нужен ли VPN?", "Нет. Подключение работает внутри официального Telegram."],
-  ["Как подключиться?", "Нажмите «Подключить» и подтвердите окно Telegram."],
+  ["Как подключиться?", "На главной нажмите «Подключить», чтобы открыть инструкцию. Реальное подключение прокси пока не настроено."],
   ["Что если перестанет работать?", "Система сама переключится на резервный сервер — делать ничего не нужно."],
   ["На каких устройствах работает?", "iPhone, Android и Telegram Desktop."],
 ];
