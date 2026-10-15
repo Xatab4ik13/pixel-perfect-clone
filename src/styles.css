@@ -67,15 +67,17 @@
 
 :root {
   --radius: 1.1rem;
-  --background: oklch(0.975 0.015 240);
+  --background: oklch(0.97 0.02 240);
   --success: oklch(0.68 0.15 155);
-  --success-soft: oklch(0.95 0.05 160);
+  --success-soft: oklch(0.94 0.06 158);
   --sky: oklch(0.93 0.04 240);
-  --gradient-primary: linear-gradient(135deg, oklch(0.72 0.14 240), oklch(0.6 0.18 255));
+  --gradient-primary: linear-gradient(90deg, oklch(0.74 0.13 235), oklch(0.62 0.17 252));
+  --gradient-success: linear-gradient(90deg, oklch(0.95 0.06 160), oklch(0.92 0.07 155));
+  --gradient-help: linear-gradient(90deg, oklch(0.94 0.035 245), oklch(0.91 0.05 250));
   --gradient-sky: radial-gradient(120% 60% at 50% 0%, oklch(0.92 0.05 240), oklch(0.975 0.015 240) 70%);
   --shadow-soft: 0 10px 30px -12px oklch(0.55 0.15 250 / 0.25);
   --shadow-button: 0 12px 28px -10px oklch(0.6 0.18 250 / 0.6);
-  --foreground: oklch(0.22 0.06 262);
+  --foreground: oklch(0.2 0.07 265);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
@@ -158,3 +160,5 @@
 @utility bg-gradient-sky { background-image: var(--gradient-sky); }
 @utility shadow-soft { box-shadow: var(--shadow-soft); }
 @utility shadow-button { box-shadow: var(--shadow-button); }
+@utility bg-gradient-success { background-image: var(--gradient-success); }
+@utility bg-gradient-help { background-image: var(--gradient-help); }
