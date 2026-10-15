@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import plane from "@/assets/icon-plane.png";
 import tabHome from "@/assets/icon-home.png";
