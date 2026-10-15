@@ -68,7 +68,7 @@ function Servers({ ask }: { ask: Ask }) {
   const [f, setF] = useState({ name: "", ip: "", country: "", provider: "" });
   return <div className="space-y-4">
     <Card title="Добавить сервер">
-      <div className="grid grid-cols-4 gap-2">{(["name", "ip", "country", "provider"] as const).map((k, i) => <Field key={k} label={["Имя", "IP", "Страна", "Провайдер"][i]} value={f[k]} onChange={e => setF({ ...f, [k]: e.target.value })} />)}</div>
+      <div className="grid grid-cols-4 gap-2">{(["name", "ip", "country", "provider"] as const).map((k, i) => <Field key={k} label={["Имя", "IP", "Страна", "Провайдер"][i] ?? k} value={f[k]} onChange={e => setF({ ...f, [k]: e.target.value })} />)}</div>
       <div className="mt-3"><Btn onClick={() => ask(`Добавить сервер «${f.name || "—"}» (${f.ip || "—"})`)}>Добавить</Btn></div>
     </Card>
     <Card title="Серверы (основной · перезапуск · вывести из работы · удалить)"><Empty /></Card>
