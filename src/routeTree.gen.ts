@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccessRouteImport } from './routes/access'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ReferralsRouteImport } from './routes/referrals'
@@ -23,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
 const AccessRoute = AccessRouteImport.update({
   id: '/access',
   path: '/access',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HelpRoute = HelpRouteImport.update({
@@ -44,6 +50,7 @@ const ReferralsRoute = ReferralsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/access': typeof AccessRoute
+  '/admin': typeof AdminRoute
   '/help': typeof HelpRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/access': typeof AccessRoute
+  '/admin': typeof AdminRoute
   '/help': typeof HelpRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
@@ -59,21 +67,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/access': typeof AccessRoute
+  '/admin': typeof AdminRoute
   '/help': typeof HelpRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/access' | '/help' | '/profile' | '/referrals'
+  fullPaths: '/' | '/access' | '/admin' | '/help' | '/profile' | '/referrals'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/access' | '/help' | '/profile' | '/referrals'
-  id: '__root__' | '/' | '/access' | '/help' | '/profile' | '/referrals'
+  to: '/' | '/access' | '/admin' | '/help' | '/profile' | '/referrals'
+  id:
+    | '__root__'
+    | '/'
+    | '/access'
+    | '/admin'
+    | '/help'
+    | '/profile'
+    | '/referrals'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccessRoute: typeof AccessRoute
+  AdminRoute: typeof AdminRoute
   HelpRoute: typeof HelpRoute
   ProfileRoute: typeof ProfileRoute
   ReferralsRoute: typeof ReferralsRoute
@@ -93,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/access'
       fullPath: '/access'
       preLoaderRoute: typeof AccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/help': {
@@ -122,6 +146,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccessRoute: AccessRoute,
+  AdminRoute: AdminRoute,
   HelpRoute: HelpRoute,
   ProfileRoute: ProfileRoute,
   ReferralsRoute: ReferralsRoute,
