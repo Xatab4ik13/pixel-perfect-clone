@@ -5,15 +5,15 @@ import { Button } from "@/components/ui/button";
 export function ConnectionGuide({ expanded = false }: { expanded?: boolean }) {
   const [open, setOpen] = useState(expanded);
   return (
-    <section className="mt-3 border-b border-border pb-4">
-      <Button variant="ghost" className="h-auto w-full justify-between px-1 py-2 text-sm font-semibold" aria-expanded={open} onClick={() => setOpen(!open)}>
+    <section className="mt-3">
+      <Button variant="ghost" className="h-10 w-full justify-center gap-2 text-sm text-muted-foreground" aria-expanded={open} onClick={() => setOpen(!open)}>
         Как подключиться?
         <ChevronDown className={open ? "rotate-180" : ""} />
       </Button>
       {open && <>
-        <ol className="mt-2 space-y-3 px-1">
+        <ol className="mt-3 space-y-4 border-l-2 border-primary/20 pl-4">
           {[
-            ["Откройте Лазейку в Telegram", "Используйте официальный Telegram на телефоне или компьютере."],
+            ["Оплатите доступ", "Выберите тариф и завершите оплату."],
             ["Подтвердите подключение прокси", "Когда появится окно Telegram, нажмите «Подключить прокси»."],
             ["Вернитесь к переписке", "После подключения отправьте сообщение в «Избранное»."],
           ].map(([title, detail], index) => <li key={title} className="flex items-start gap-3">
@@ -21,7 +21,7 @@ export function ConnectionGuide({ expanded = false }: { expanded?: boolean }) {
             <div><p className="text-sm font-semibold">{title}</p><p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{detail}</p></div>
           </li>)}
         </ol>
-        <p className="mt-3 px-1 text-xs leading-relaxed text-muted-foreground">Сейчас доступна только инструкция. Подключение прокси ещё не настроено.</p>
+        <p className="mt-4 text-center text-xs text-muted-foreground">В тестовом режиме подключение не выполняется.</p>
       </>}
     </section>
   );

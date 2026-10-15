@@ -163,6 +163,10 @@
 @utility bg-gradient-success { background-image: var(--gradient-success); }
 @utility bg-gradient-help { background-image: var(--gradient-help); }
 
+.payment-qr { color: var(--foreground); }
+.referral-ring { background: conic-gradient(var(--primary) 60%, var(--sky) 0); }
+.reward-ring { background: conic-gradient(var(--success) 60%, var(--success-soft) 0); }
+
 @layer base {
   html {
     scrollbar-width: none;
