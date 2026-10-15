@@ -13,12 +13,15 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     try {
       const saved: unknown = JSON.parse(localStorage.getItem('lazeyka-demo') ?? 'null');
       if (saved && typeof saved === 'object' && 'days' in saved && typeof saved.days === 'number') setDays(saved.days);
+      if (saved && typeof saved === 'object' && 'payments' in saved && Array.isArray(saved.payments)) {
+        setPayments(saved.payments.filter((item): item is Payment => Boolean(item) && typeof item === 'object' && typeof item.name === 'string' && typeof item.price === 'number' && typeof item.days === 'number'));
+      }
     } catch { /* An unreadable demo starts unpaid. */ }
     const storedCode = localStorage.getItem('lazeyka-demo-code') || crypto.randomUUID().slice(0, 8);
     localStorage.setItem('lazeyka-demo-code', storedCode);
     setCode(storedCode); setReady(true);
   }, []);
-  useEffect(() => { if (ready) localStorage.setItem('lazeyka-demo', JSON.stringify({ days })); }, [days, ready]);
+  useEffect(() => { if (ready) localStorage.setItem('lazeyka-demo', JSON.stringify({ days, payments })); }, [days, payments, ready]);
   const pay = (plan: DemoPlan) => { setDays(value => applyDemoPayment(value, plan)); setPayments(value => [{ name: plan.name, price: plan.price, days: plan.days }, ...value]); };
   return <DemoContext.Provider value={{ days, payments, code, pay, reset: () => { setDays(0); setPayments([]); } }}>{children}</DemoContext.Provider>;
 }
