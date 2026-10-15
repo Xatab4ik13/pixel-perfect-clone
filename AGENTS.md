@@ -13,3 +13,5 @@
 - Keep demo plan definitions and payment arithmetic in demo-access so access and payment use one source of truth.
 - Keep the connection instructions in ConnectionGuide so the home action and disclosure share the same content.
 - Keep home benefit artwork in HomeBenefits; homepage tariffs reuse DEMO_PLANS and PaymentSheet to preserve the existing mock checkout flow.
+- Keep invitation content in Invitations within the account; redirect the legacy referrals URL so there is only one invitation view.
+- Keep display-only payment history fixtures in demo-access separate from DemoProvider access balances so historical examples cannot activate unpaid access.

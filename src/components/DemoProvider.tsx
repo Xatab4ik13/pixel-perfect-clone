@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { applyDemoPayment, type DemoPlan } from '@/lib/demo-access';
+import { applyDemoPayment, type DemoPlan, type DemoPayment } from '@/lib/demo-access';
 
-type Payment = { name: string; price: number; days: number };
+type Payment = DemoPayment;
 type DemoState = { days: number; payments: Payment[]; code: string; pay: (plan: DemoPlan) => void; reset: () => void };
 const DemoContext = createContext<DemoState | null>(null);
 export function DemoProvider({ children }: { children: ReactNode }) {
@@ -22,7 +22,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     setCode(storedCode); setReady(true);
   }, []);
   useEffect(() => { if (ready) localStorage.setItem('lazeyka-demo', JSON.stringify({ days, payments })); }, [days, payments, ready]);
-  const pay = (plan: DemoPlan) => { setDays(value => applyDemoPayment(value, plan)); setPayments(value => [{ name: plan.name, price: plan.price, days: plan.days }, ...value]); };
+  const pay = (plan: DemoPlan) => { setDays(value => applyDemoPayment(value, plan)); setPayments(value => [{ name: plan.name, price: plan.price, days: plan.days, paidAt: new Date().toISOString() }, ...value]); };
   return <DemoContext.Provider value={{ days, payments, code, pay, reset: () => { setDays(0); setPayments([]); } }}>{children}</DemoContext.Provider>;
 }
 export function useDemo() {

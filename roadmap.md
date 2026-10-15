@@ -1,4 +1,6 @@
 # Tasks
+- [ ] Move invitations into the personal account and redirect the old page.
+- [ ] Add styled mock payment history and verify the account flow.
 - [x] Add home benefit plaques with transparent 3D imagery and an illustrated background.
 - [x] Show three existing tariffs on home and verify their mock payment actions.
 - [x] Unify mock paid/unpaid access and add home payment action.

@@ -4,6 +4,13 @@ export const DEMO_PLANS = [
   { id: 'year', name: '12 месяцев', price: 1690, days: 365 },
 ] as const;
 export type DemoPlan = typeof DEMO_PLANS[number];
+export type DemoPayment = { name: string; price: number; days: number; paidAt?: string };
+// Historical examples are display-only and never grant current access.
+export const DEMO_PAYMENT_HISTORY: DemoPayment[] = [
+  { ...DEMO_PLANS[0], paidAt: '2026-08-12T12:24:00Z' },
+  { ...DEMO_PLANS[1], paidAt: '2026-05-12T09:10:00Z' },
+  { ...DEMO_PLANS[0], paidAt: '2026-04-12T15:42:00Z' },
+];
 export function applyDemoPayment(currentDays: number, plan: DemoPlan) {
   return Math.max(0, currentDays) + plan.days;
 }
