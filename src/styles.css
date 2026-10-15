@@ -51,6 +51,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-sky: var(--sky);
+  --font-sans: "Manrope", system-ui, sans-serif;
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -62,15 +66,22 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
+  --radius: 1.1rem;
+  --background: oklch(0.975 0.015 240);
+  --success: oklch(0.68 0.15 155);
+  --success-soft: oklch(0.95 0.05 160);
+  --sky: oklch(0.93 0.04 240);
+  --gradient-primary: linear-gradient(135deg, oklch(0.72 0.14 240), oklch(0.6 0.18 255));
+  --gradient-sky: radial-gradient(120% 60% at 50% 0%, oklch(0.92 0.05 240), oklch(0.975 0.015 240) 70%);
+  --shadow-soft: 0 10px 30px -12px oklch(0.55 0.15 250 / 0.25);
+  --shadow-button: 0 12px 28px -10px oklch(0.6 0.18 250 / 0.6);
+  --foreground: oklch(0.22 0.06 262);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.62 0.17 250);
+  --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
@@ -142,3 +153,8 @@
     color: var(--color-foreground);
   }
 }
+
+@utility bg-gradient-primary { background-image: var(--gradient-primary); }
+@utility bg-gradient-sky { background-image: var(--gradient-sky); }
+@utility shadow-soft { box-shadow: var(--shadow-soft); }
+@utility shadow-button { box-shadow: var(--shadow-button); }
