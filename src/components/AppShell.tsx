@@ -1,30 +1,39 @@
 import { Link } from "@tanstack/react-router";
-import { Home, CalendarDays, HelpCircle, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import plane from "@/assets/icon-plane.png";
+import tabHome from "@/assets/icon-home.png";
+import tabCalendar from "@/assets/icon-tab-calendar.png";
+import tabHelp from "@/assets/icon-tab-help.png";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const tabs = [
-    { to: "/", label: "Главная", icon: Home },
-    { to: "/access", label: "Мой доступ", icon: CalendarDays },
-    { to: "/help", label: "Помощь", icon: HelpCircle },
+    { to: "/", label: "Главная", icon: tabHome },
+    { to: "/access", label: "Мой доступ", icon: tabCalendar },
+    { to: "/help", label: "Помощь", icon: tabHelp },
   ] as const;
   return (
     <div className="min-h-screen bg-gradient-sky">
       <div className="mx-auto flex min-h-screen max-w-md flex-col px-5 pb-28 pt-6">{children}</div>
       <nav className="fixed inset-x-0 bottom-0 border-t border-border bg-card/95 backdrop-blur">
         <div className="mx-auto grid max-w-md grid-cols-3">
-          {tabs.map(({ to, label, icon: Icon }) => (
+          {tabs.map(({ to, label, icon }) => (
             <Link
               key={to}
               to={to}
               activeOptions={{ exact: true }}
-              className="flex flex-col items-center gap-1 py-3 text-xs text-muted-foreground"
+              className="flex flex-col items-center gap-0.5 py-2 text-xs text-muted-foreground"
               activeProps={{ className: "text-primary font-semibold" }}
             >
               {({ isActive }) => (
                 <>
-                  <Icon className="h-6 w-6" fill={isActive ? "currentColor" : "none"} fillOpacity={isActive ? 0.9 : 0} />
+                  <img
+                    src={icon}
+                    alt=""
+                    width={256}
+                    height={256}
+                    className={`h-8 w-8 object-contain transition ${isActive ? "scale-110" : "opacity-50 grayscale"}`}
+                  />
                   {label}
                 </>
               )}
