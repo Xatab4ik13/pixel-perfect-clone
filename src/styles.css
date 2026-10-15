@@ -162,3 +162,12 @@
 @utility shadow-button { box-shadow: var(--shadow-button); }
 @utility bg-gradient-success { background-image: var(--gradient-success); }
 @utility bg-gradient-help { background-image: var(--gradient-help); }
+
+@layer base {
+  html {
+    scrollbar-width: none;
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
