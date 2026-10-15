@@ -15,3 +15,4 @@
 - Keep home benefit artwork in HomeBenefits; homepage tariffs reuse DEMO_PLANS and PaymentSheet to preserve the existing mock checkout flow.
 - Keep invitation content in Invitations within the account; redirect the legacy referrals URL so there is only one invitation view.
 - Keep display-only payment history fixtures in demo-access separate from DemoProvider access balances so historical examples cannot activate unpaid access.
+- Keep the desktop admin at /admin frontend-only; every mutating action goes through AdminConfirm (confirmation + required reason) so the rule lives in one place.
