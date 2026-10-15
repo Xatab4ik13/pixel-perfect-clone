@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type PendingAction = { title: string; onDone?: () => void } | null;
+export type PendingAction = { title: string; onDone?: (() => void) | undefined } | null;
 
 // Every mutating admin action goes through this dialog: confirmation + required reason.
 export function AdminConfirm({ action, onClose, onLog }: { action: PendingAction; onClose: () => void; onLog: (text: string) => void }) {
