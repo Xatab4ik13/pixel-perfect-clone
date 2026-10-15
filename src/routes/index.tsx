@@ -46,7 +46,7 @@ function Index() {
       </div>
     </section>
     <HomeBenefits />
-    <Button asChild variant="ghost" className="mt-5 h-auto justify-start whitespace-normal rounded-2xl bg-gradient-help p-4 shadow-soft"><Link to="/referrals"><IconImg src={gift} className="h-12 w-12" /><span className="flex-1 text-left"><span className="block font-bold">Пригласить друзей</span><span className="mt-1 block text-xs font-normal text-muted-foreground">+30 дней за каждого друга</span></span><ChevronRight /></Link></Button>
+    <Button asChild variant="ghost" className="mt-5 h-auto justify-start whitespace-normal rounded-2xl bg-gradient-help p-4 shadow-soft"><Link to="/profile" hash="invitations"><IconImg src={gift} className="h-12 w-12" /><span className="flex-1 text-left"><span className="block font-bold">Пригласить друзей</span><span className="mt-1 block text-xs font-normal text-muted-foreground">+30 дней за каждого друга</span></span><ChevronRight /></Link></Button>
     <Button asChild variant="ghost" className="mt-3 h-auto justify-start rounded-2xl bg-card p-4 shadow-soft"><Link to="/help"><IconImg src={headset} className="h-10 w-10" /><span className="flex-1 text-left font-bold">Помощь и поддержка</span><ChevronRight /></Link></Button>
     <p className="mt-5 text-center text-xs text-muted-foreground">Тестовый аккаунт Telegram · без списаний</p>
     <PaymentSheet plan={payment} onClose={() => setPayment(null)} />
