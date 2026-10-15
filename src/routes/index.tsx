@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, ChevronRight, PowerOff, Sparkle } from "lucide-react";
+import { ArrowRight, ChevronRight, Sparkle } from "lucide-react";
 import { AppShell, IconImg, Logo } from "@/components/AppShell";
+import { ConnectionGuide } from "@/components/ConnectionGuide";
+import { Button } from "@/components/ui/button";
 import shield from "@/assets/icon-shield.jpg";
 import calendar from "@/assets/icon-calendar.png";
 import bolt from "@/assets/icon-bolt.png";
@@ -14,34 +16,24 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Стабильный доступ к Telegram в одно нажатие, без VPN и настроек." },
       { property: "og:title", content: "Лазейка — Telegram без лишних сложностей" },
       { property: "og:description", content: "Стабильный доступ к Telegram в одно нажатие, без VPN и настроек." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Index,
 });
 
 function Index() {
-  const [connected, setConnected] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   return (
     <AppShell>
       <Logo />
 
-      {connected ? (
-        <button
-          onClick={() => setConnected(false)}
-          className="mt-7 flex items-center justify-center gap-2 rounded-2xl border border-border bg-card/70 py-3 text-sm font-semibold text-muted-foreground transition active:scale-[0.98]"
-        >
-          <PowerOff className="h-4 w-4" />
-          Отключить
-        </button>
-      ) : (
-        <button
-          onClick={() => setConnected(true)}
-          className="relative mt-7 flex items-center justify-center rounded-2xl bg-gradient-primary py-4 text-lg font-semibold text-primary-foreground shadow-button transition active:scale-[0.98]"
-        >
-          Подключить
-          <ArrowRight className="absolute right-5 h-6 w-6" />
-        </button>
-      )}
+      <Button onClick={() => setGuideOpen(true)} className="relative mt-7 h-auto rounded-2xl bg-gradient-primary py-4 text-lg font-semibold text-primary-foreground shadow-button">
+        Подключить
+        <ArrowRight className="absolute right-5 h-6 w-6" />
+      </Button>
+      <ConnectionGuide key={guideOpen ? "expanded" : "collapsed"} expanded={guideOpen} />
 
       <div className="mt-4 flex items-center gap-4 rounded-2xl bg-gradient-success p-4 shadow-soft">
         <img src={shield} alt="" width={256} height={256} className="h-12 w-12 rounded-xl" />
