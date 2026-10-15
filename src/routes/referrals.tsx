@@ -10,7 +10,7 @@ import { REFERRAL_DAYS, nextRewardMonth, rewardDays } from "@/lib/referral-rules
 import gift from "@/assets/icon-gift.png";
 
 export const Route = createFileRoute("/referrals")({
-  validateSearch: (search: Record<string, unknown>) => ({ ref: typeof search.ref === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(search.ref) ? search.ref : undefined }),
+  validateSearch: (search: Record<string, unknown>): { ref?: string } => ({ ref: typeof search['ref'] === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(search['ref']) ? search['ref'] : undefined }),
   head: () => ({ meta: [
     { title: "Пригласить друзей — Лазейка" },
     { name: "description", content: "30 дней доступа на следующий месяц за каждого приглашённого друга." },
