@@ -1,6 +1,6 @@
 # Tasks
-- [ ] Add home benefit plaques with transparent 3D imagery and an illustrated background.
-- [ ] Show three existing tariffs on home and verify their mock payment actions.
+- [x] Add home benefit plaques with transparent 3D imagery and an illustrated background.
+- [x] Show three existing tariffs on home and verify their mock payment actions.
 - [x] Unify mock paid/unpaid access and add home payment action.
 - [x] Add reference-style payment sheet without phone numbers.
 - [x] Replace referral login with personal Telegram demo link and two counters.
