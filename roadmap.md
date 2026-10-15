@@ -1,5 +1,6 @@
 # Tasks
-- [x] Add a short connection guide on the home screen.
-- [x] Add the referral program with 30 days per friend for next month.
-- [x] Verify public screens, instruction action, mobile/desktop layout and reward-rule tests.
-- [ ] Verify authenticated referral acceptance; blocked until a user signs in (no auth users yet).
+- [ ] Unify mock paid/unpaid access and add home payment action.
+- [ ] Add reference-style payment sheet without phone numbers.
+- [ ] Replace referral login with personal Telegram demo link and two counters.
+- [ ] Add personal account and make connection instructions more cohesive.
+- [ ] Verify mock payment, account, referral and connection flows.
