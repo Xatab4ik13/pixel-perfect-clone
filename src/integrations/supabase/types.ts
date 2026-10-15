@@ -14,13 +14,73 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      referral_accounts: {
+        Row: {
+          code: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          code?: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referral_rewards: {
+        Row: {
+          available_from: string
+          created_at: string
+          days: number
+          friend_id: string
+          id: string
+          inviter_id: string
+        }
+        Insert: {
+          available_from: string
+          created_at?: string
+          days?: number
+          friend_id: string
+          id?: string
+          inviter_id: string
+        }
+        Update: {
+          available_from?: string
+          created_at?: string
+          days?: number
+          friend_id?: string
+          id?: string
+          inviter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_rewards_friend_id_fkey"
+            columns: ["friend_id"]
+            isOneToOne: true
+            referencedRelation: "referral_accounts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "referral_rewards_inviter_id_fkey"
+            columns: ["inviter_id"]
+            isOneToOne: false
+            referencedRelation: "referral_accounts"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      accept_referral: { Args: { invite_code: string }; Returns: boolean }
+      ensure_referral_account: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
