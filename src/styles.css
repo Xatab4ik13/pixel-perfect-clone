@@ -164,6 +164,7 @@
 @utility bg-gradient-help { background-image: var(--gradient-help); }
 
 .payment-qr { color: var(--foreground); }
+.benefit-cutout { filter: drop-shadow(0 12px 10px var(--benefit-shadow)); }
 .referral-ring { background: conic-gradient(var(--primary) 60%, var(--sky) 0); }
 .reward-ring { background: conic-gradient(var(--success) 60%, var(--success-soft) 0); }
 
