@@ -24,11 +24,6 @@ function Index() {
   const [connected, setConnected] = useState(false);
   return (
     <AppShell>
-      <div className="flex justify-end">
-        <button aria-label="Настройки" className="rounded-full bg-card p-2 shadow-soft">
-          <IconImg src={gear} className="h-6 w-6" />
-        </button>
-      </div>
       <Logo />
       <button
         onClick={() => setConnected(true)}
