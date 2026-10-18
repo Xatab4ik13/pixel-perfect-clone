@@ -5,7 +5,7 @@ export const Route = createFileRoute("/api/plans")({
     handlers: {
       GET: async (context) => {
         const { handlers } = await import("@/server/http-routes/plans.server");
-        return handlers.GET(context);
+        return handlers.GET();
       },
     },
   },

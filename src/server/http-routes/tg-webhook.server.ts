@@ -15,7 +15,7 @@ interface TgUpdate {
 
 
 export const handlers = {
-      POST: async ({ request }) => {
+      POST: async ({ request }: { request: Request }) => {
         // Authenticity: Telegram echoes our secret token on every call.
         const secret = env.botWebhookSecret();
         if (secret && request.headers.get("x-telegram-bot-api-secret-token") !== secret) {

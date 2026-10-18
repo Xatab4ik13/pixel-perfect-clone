@@ -4,7 +4,7 @@ import { json } from "@/server/http";
 
 
 export const handlers = {
-      POST: async ({ request }) => {
+      POST: async ({ request }: { request: Request }) => {
         try {
           const body = (await request.json().catch(() => ({}))) as { email?: string; password?: string };
           if (!body.email || !body.password) {

@@ -7,7 +7,7 @@ import { buildInviteLink } from "@/lib/referral-rules";
 
 
 export const handlers = {
-      GET: handler(async ({ request }) => {
+      GET: handler(async ({ request }: { request: Request }) => {
         const user = await requireUser(request);
         const stats = await getReferralStats(user.id);
         return json({

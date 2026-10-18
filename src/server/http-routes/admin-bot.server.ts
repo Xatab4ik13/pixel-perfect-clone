@@ -5,7 +5,7 @@ import { json } from "@/server/http";
 
 
 export const handlers = {
-      POST: async ({ request }) => {
+      POST: async ({ request }: { request: Request }) => {
         try {
           await requireAdmin(request, "admin");
           const result = await configureBot();

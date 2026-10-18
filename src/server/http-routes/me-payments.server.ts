@@ -7,7 +7,7 @@ import { handler, json } from "@/server/http";
 
 
 export const handlers = {
-      GET: handler(async ({ request }) => {
+      GET: handler(async ({ request }: { request: Request }) => {
         const user = await requireUser(request);
         const db = getDb();
         const rows = await db

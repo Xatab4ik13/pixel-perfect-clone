@@ -5,7 +5,7 @@ import { handler, json } from "@/server/http";
 
 
 export const handlers = {
-      GET: handler(async ({ request }) => {
+      GET: handler(async ({ request }: { request: Request }) => {
         const user = await requireUser(request);
         const access = await getAccessView(user.id);
         return json({

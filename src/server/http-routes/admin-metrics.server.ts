@@ -4,7 +4,7 @@ import { json } from "@/server/http";
 
 
 export const handlers = {
-      GET: async ({ request }) => {
+      GET: async ({ request }: { request: Request }) => {
         try {
           await requireAdmin(request, "viewer");
           return json(await getEconomics());

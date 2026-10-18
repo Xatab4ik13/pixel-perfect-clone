@@ -4,7 +4,7 @@ import { json } from "@/server/http";
 
 
 export const handlers = {
-      GET: async ({ request }) => {
+      GET: async ({ request }: { request: Request }) => {
         try {
           const session = await requireAdmin(request);
           return json({ id: session.sub, role: session.role });

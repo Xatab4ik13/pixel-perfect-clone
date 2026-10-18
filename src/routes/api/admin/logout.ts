@@ -5,7 +5,7 @@ export const Route = createFileRoute("/api/admin/logout")({
     handlers: {
       POST: async (context) => {
         const { handlers } = await import("@/server/http-routes/admin-logout.server");
-        return handlers.POST(context);
+        return handlers.POST();
       },
     },
   },

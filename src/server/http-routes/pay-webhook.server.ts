@@ -9,7 +9,7 @@ import { json } from "@/server/http";
 
 export const handlers = {
       // Provider -> us. No CSRF (server route); authenticity is the signature.
-      POST: async ({ request }) => {
+      POST: async ({ request }: { request: Request }) => {
         try {
           const rawBody = await request.text();
           const provider = getPaymentProvider();

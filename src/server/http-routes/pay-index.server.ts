@@ -6,7 +6,7 @@ import { handler, json } from "@/server/http";
 
 export const handlers = {
       // Create a payment for the authenticated user. Body: { planId }.
-      POST: handler(async ({ request }) => {
+      POST: handler(async ({ request }: { request: Request }) => {
         const user = await requireUser(request);
         const body = (await request.json().catch(() => ({}))) as { planId?: string };
         if (!body.planId) return json({ error: "planId required" }, { status: 400 });

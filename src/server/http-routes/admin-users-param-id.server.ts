@@ -5,7 +5,7 @@ import { json } from "@/server/http";
 
 
 export const handlers = {
-      POST: async ({ request, params }) => {
+      POST: async ({ request, params }: { request: Request; params: { id: string } }) => {
         try {
           const session = await requireAdmin(request, "operator");
           const userId = params.id;
