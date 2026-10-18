@@ -1,4 +1,7 @@
 # Tasks
+- [ ] Replace previous application with uploaded web source and preserve VPS backend and telemt.
+- [ ] Import server deployment sources without secrets or custom Rust engine.
+- [ ] Verify imported pages and existing tests; distinguish preview from live server verification.
 - [x] Move invitations into the personal account and redirect the old page.
 - [x] Add styled mock payment history and verify the account flow.
 - [x] Add home benefit plaques with transparent 3D imagery and an illustrated background.
