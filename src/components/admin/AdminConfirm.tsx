@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type PendingAction = { title: string; onDone?: (() => void) | undefined } | null;
+export type PendingAction = { title: string; onDone?: ((reason: string) => void) | undefined } | null;
 
 // Every mutating admin action goes through this dialog: confirmation + required reason.
 export function AdminConfirm({ action, onClose, onLog }: { action: PendingAction; onClose: () => void; onLog: (text: string) => void }) {
@@ -17,7 +17,7 @@ export function AdminConfirm({ action, onClose, onLog }: { action: PendingAction
         </label>
         <div className="mt-5 flex justify-end gap-2">
           <button onClick={close} className="rounded-lg border border-border px-4 py-2 text-sm">Отмена</button>
-          <button disabled={!reason.trim()} onClick={() => { onLog(`${action.title} — причина: ${reason.trim()}`); action.onDone?.(); close(); }} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-40">Подтвердить</button>
+          <button disabled={!reason.trim()} onClick={() => { const r = reason.trim(); onLog(`${action.title} — причина: ${r}`); action.onDone?.(r); close(); }} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-40">Подтвердить</button>
         </div>
       </div>
     </div>

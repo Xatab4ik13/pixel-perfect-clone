@@ -1,29 +1,28 @@
-# Welcome to your Lovable project
+# Лазейка
 
-This project was built with [Lovable](https://lovable.dev).
+Исходники приложения из загруженного архива заменяют прежнюю демо-версию.
+Приложение и PostgreSQL остаются на существующем VPS, сетевой доступ обслуживает telemt.
+Собственный Rust-движок не включён.
 
-## Build with Lovable
+## Структура
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+- `src/routes`: Mini App, админка и существующие HTTP-адреса.
+- `src/server`: вход Telegram, доступ, платежи, приглашения, бот и управление telemt.
+- `src/server/http-routes`: реализации обработчиков, загружаемые только на сервере.
+- `scripts/deploy`: исходные VPS-скрипты без файла, содержащего встроенный секрет.
+- `vps/drizzle`: исходная схема и миграции для проверки, не применённые к базе.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+## Существующий VPS
 
-## Development
+Корень этого репозитория соответствует прежней папке `apps/web` и пути `/opt/lazeyka/app`.
+Существующие переменные окружения остаются на VPS и в репозиторий не копируются.
+Сборка для VPS: `NITRO_PRESET=node-server npm run build`.
+Служба запускает `.output/server/index.mjs`, как в исходном проекте.
+Не запускайте установку базы и миграции без проверки состояния существующей базы.
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Проверки и ограничения
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+В обычном браузере Mini App показывает вход через Telegram; `/admin` показывает форму входа.
+Предпросмотр не подключён к вашему VPS и не подтверждает работу банка, бота или выдачу доступа.
+Ранее выявленные ошибки оплаты и начисления доступа этим переносом не исправляются.
+Серверные скрипты сохранены как исходники, не запускались.

@@ -5,8 +5,14 @@ import tabHome from "@/assets/icon-home.png";
 import tabCalendar from "@/assets/icon-tab-calendar.png";
 import tabHelp from "@/assets/icon-tab-help.png";
 import tabProfile from "@/assets/icon-profile.png";
+import { useDemo } from "@/components/DemoProvider";
+import { TelegramGate } from "@/components/TelegramGate";
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const { isTelegram, loading } = useDemo();
+  if (loading) return <div className="min-h-screen bg-gradient-sky" />;
+  if (!isTelegram) return <TelegramGate />;
+
   const tabs = [
     { to: "/", label: "Главная", icon: tabHome },
     { to: "/access", label: "Мой доступ", icon: tabCalendar },

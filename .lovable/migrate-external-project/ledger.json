@@ -1,0 +1,114 @@
+[
+  {
+    "capability": "application code",
+    "source": "lazeyka-project.zip",
+    "outcome": "import",
+    "status": "imported and preview verified",
+    "next_action": null
+  },
+  {
+    "capability": "schema",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "preserved as source",
+    "next_action": "Reconcile archived migrations with existing VPS database before any application; no migration applied"
+  },
+  {
+    "capability": "records",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "preserved on existing VPS by user choice",
+    "next_action": "No data or user migration requested; preview is not connected to VPS"
+  },
+  {
+    "capability": "auth identities",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "preserved on existing VPS by user choice",
+    "next_action": "No data or user migration requested; preview is not connected to VPS"
+  },
+  {
+    "capability": "authorization",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "source preserved; live verification pending",
+    "next_action": "Verify on existing VPS; no production service was modified"
+  },
+  {
+    "capability": "uploaded assets",
+    "source": "lazeyka-project.zip",
+    "outcome": "import",
+    "status": "imported and preview verified",
+    "next_action": null
+  },
+  {
+    "capability": "payment provider",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "source preserved; live verification pending",
+    "next_action": "Verify on existing VPS; no production service was modified"
+  },
+  {
+    "capability": "telemt",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "source preserved; live verification pending",
+    "next_action": "Verify on existing VPS; no production service was modified"
+  },
+  {
+    "capability": "telegram bot",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "source preserved; live verification pending",
+    "next_action": "Verify on existing VPS; no production service was modified"
+  },
+  {
+    "capability": "public endpoints",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "source preserved; live verification pending",
+    "next_action": "Verify on existing VPS; no production service was modified"
+  },
+  {
+    "capability": "callbacks and webhooks",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "source preserved; live verification pending",
+    "next_action": "Verify on existing VPS; no production service was modified"
+  },
+  {
+    "capability": "schedules",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "source preserved; live verification pending",
+    "next_action": "Verify on existing VPS; no production service was modified"
+  },
+  {
+    "capability": "secrets",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "not copied",
+    "next_action": "Keep existing server environment; one embedded-token operational script excluded"
+  },
+  {
+    "capability": "server cutover",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "not performed",
+    "next_action": "User deploys reviewed code to existing VPS when requested"
+  },
+  {
+    "capability": "live verification",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "blocked",
+    "next_action": "Requires existing VPS configuration and access; live bank, Telegram and telemt flow not tested"
+  },
+  {
+    "capability": "custom Rust engine",
+    "source": "services/gateway",
+    "outcome": "omit by explicit user request",
+    "status": "accepted",
+    "next_action": null
+  }
+]

@@ -103,6 +103,8 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="ru">
       <head>
+        {/* Telegram Mini App SDK — must load before the app reads initData. */}
+        <script src="https://telegram.org/js/telegram-web-app.js" />
         <HeadContent />
       </head>
       <body>
