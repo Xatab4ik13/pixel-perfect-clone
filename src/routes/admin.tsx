@@ -1,181 +1,312 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { AdminConfirm, type PendingAction } from "@/components/admin/AdminConfirm";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Админка — Лазейка" },
-      { name: "description", content: "Панель управления пользователями, тарифами, серверами и доменами Лазейки." },
+      { property: "og:description", content: "Панель управления пользователями, подписками и экономикой Лазейки." },
       { property: "og:title", content: "Админка — Лазейка" },
-      { property: "og:description", content: "Панель управления сервисом Лазейка." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+
+      { title: "Админка — Лазейка" },
+      { name: "description", content: "Панель управления пользователями, подписками и экономикой Лазейки." },
       { name: "robots", content: "noindex" },
     ],
   }),
   component: AdminPage,
 });
 
-const SECTIONS = ["Пользователи", "Подписки и тарифы", "Серверы", "Домены маскировки", "Автоматика", "Рассылки", "Настройки"] as const;
-type Section = typeof SECTIONS[number];
-type Ask = (title: string, onDone?: () => void) => void;
-
-function Card({ title, children }: { title: string; children: ReactNode }) {
-  return <section className="rounded-2xl border border-border bg-card p-5"><h3 className="mb-3 font-bold">{title}</h3>{children}</section>;
-}
-function Empty() { return <div className="rounded-xl border border-dashed border-border py-8 text-center text-sm text-muted-foreground">Нет данных</div>; }
-function Field({ label, ...p }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
-  return <label className="block text-xs font-semibold text-muted-foreground">{label}<input {...p} className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground" /></label>;
-}
-function Btn({ children, onClick, danger }: { children: ReactNode; onClick: () => void; danger?: boolean }) {
-  return <button onClick={onClick} className={`rounded-lg px-3 py-2 text-sm font-semibold ${danger ? "border border-destructive text-destructive" : "bg-primary text-primary-foreground"}`}>{children}</button>;
+// ── API helpers ──────────────────────────────────────────────────────────────
+async function api<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(path, {
+    ...init,
+    headers: { "content-type": "application/json", ...(init?.headers ?? {}) },
+  });
+  const data = (await res.json().catch(() => ({}))) as T & { error?: string };
+  if (!res.ok) throw new Error((data as { error?: string }).error ?? `HTTP ${res.status}`);
+  return data;
 }
 
-function Users({ ask }: { ask: Ask }) {
-  const [q, setQ] = useState(""); const [searched, setSearched] = useState(false);
-  return <div className="space-y-4">
-    <Card title="Поиск пользователя">
-      <div className="flex gap-2"><div className="flex-1"><Field label="@username или Telegram ID" value={q} onChange={e => setQ(e.target.value)} /></div>
-        <div className="self-end"><Btn onClick={() => setSearched(true)}>Найти</Btn></div></div>
-      <p className="mt-2 text-xs text-muted-foreground">Ссылка пользователя показывается только в его карточке по кнопке «Показать».</p>
-    </Card>
-    <Card title="Карточка пользователя">{searched ? <Empty /> : <p className="text-sm text-muted-foreground">Найдите пользователя, чтобы открыть карточку.</p>}</Card>
-    <Card title="Действия (станут доступны в карточке)">
-      <div className="flex flex-wrap gap-2 opacity-50 pointer-events-none">
-        {["Выдать доступ вручную", "Продлить на N дней", "Перевыпустить ссылку", "Показать ссылку", "Отозвать доступ", "Заблокировать / разблокировать", "Написать через бота"].map(a => <Btn key={a} onClick={() => ask(a)}>{a}</Btn>)}
-      </div>
-    </Card>
-  </div>;
+interface Economics {
+  users: { total: number; activeSubs: number; expiredSubs: number };
+  revenue: { totalRub: number; last30dRub: number; paymentsPaid: number };
+  byPlan: Array<{ planId: string; count: number; revenueRub: number }>;
+}
+interface UserRow {
+  id: string;
+  telegramUserId: number;
+  username: string | null;
+  firstName: string | null;
+  status: string;
+  planId: string | null;
+  currentPeriodEnd: string | null;
+  createdAt: string;
 }
 
-function Plans({ ask }: { ask: Ask }) {
-  const [f, setF] = useState({ name: "", price: "", days: "" });
-  const [promo, setPromo] = useState({ code: "", days: "" });
-  return <div className="grid gap-4 lg:grid-cols-2">
-    <Card title="Создать тариф">
-      <div className="grid grid-cols-3 gap-2"><Field label="Название" value={f.name} onChange={e => setF({ ...f, name: e.target.value })} /><Field label="Цена, ₽" type="number" value={f.price} onChange={e => setF({ ...f, price: e.target.value })} /><Field label="Срок, дней" type="number" value={f.days} onChange={e => setF({ ...f, days: e.target.value })} /></div>
-      <div className="mt-3"><Btn onClick={() => ask(`Создать тариф «${f.name || "без названия"}»`)}>Создать</Btn></div>
-    </Card>
-    <Card title="Промокод / бесплатные дни">
-      <div className="grid grid-cols-2 gap-2"><Field label="Промокод" value={promo.code} onChange={e => setPromo({ ...promo, code: e.target.value })} /><Field label="Дней" type="number" value={promo.days} onChange={e => setPromo({ ...promo, days: e.target.value })} /></div>
-      <div className="mt-3"><Btn onClick={() => ask(`Выдать промокод «${promo.code || "—"}» на ${promo.days || 0} дн.`)}>Выдать</Btn></div>
-    </Card>
-    <Card title="Тарифы (изменить / выключить)"><Empty /></Card>
-    <Card title="Платежи и возвраты"><Empty /></Card>
-  </div>;
-}
+const rub = (n: number) => n.toLocaleString("ru-RU") + " ₽";
+const fmtDate = (s: string | null) => (s ? new Date(s).toLocaleDateString("ru-RU") : "—");
 
-function Servers({ ask }: { ask: Ask }) {
-  const [f, setF] = useState({ name: "", ip: "", country: "", provider: "" });
-  return <div className="space-y-4">
-    <Card title="Добавить сервер">
-      <div className="grid grid-cols-4 gap-2">{(["name", "ip", "country", "provider"] as const).map((k, i) => <Field key={k} label={["Имя", "IP", "Страна", "Провайдер"][i] ?? k} value={f[k]} onChange={e => setF({ ...f, [k]: e.target.value })} />)}</div>
-      <div className="mt-3"><Btn onClick={() => ask(`Добавить сервер «${f.name || "—"}» (${f.ip || "—"})`)}>Добавить</Btn></div>
-    </Card>
-    <Card title="Серверы (основной · перезапуск · вывести из работы · удалить)"><Empty /></Card>
-  </div>;
-}
-
-function Domains({ ask }: { ask: Ask }) {
-  const [d, setD] = useState("");
-  return <div className="space-y-4">
-    <Card title="Добавить домен">
-      <div className="flex gap-2"><div className="flex-1"><Field label="Домен" placeholder="docs.rs" value={d} onChange={e => setD(e.target.value)} /></div><div className="self-end"><Btn onClick={() => ask(`Добавить домен «${d || "—"}»`)}>Добавить</Btn></div></div>
-    </Card>
-    <Card title="Домены (для новых пользователей · заблокирован → перевыпуск ссылок, бот разошлёт сам)"><Empty /></Card>
-  </div>;
-}
-
-function Automation({ ask }: { ask: Ask }) {
-  const [on, setOn] = useState(true); const [chat, setChat] = useState("");
-  return <div className="grid gap-4 lg:grid-cols-2">
-    <Card title="Агент-восстановитель">
-      <div className="flex items-center justify-between"><span className="text-sm">Автоматика {on ? "включена" : "выключена"}</span>
-        <button role="switch" aria-checked={on} onClick={() => ask(on ? "Выключить автоматику" : "Включить автоматику", () => setOn(!on))} className={`h-7 w-12 rounded-full p-1 transition ${on ? "bg-primary" : "bg-muted"}`}><span className={`block h-5 w-5 rounded-full bg-card transition ${on ? "translate-x-5" : ""}`} /></button></div>
-    </Card>
-    <Card title="Уведомления">
-      <Field label="Ваш Telegram-чат (ID или @username)" value={chat} onChange={e => setChat(e.target.value)} />
-      <div className="mt-3"><Btn onClick={() => ask(`Присылать уведомления в «${chat || "—"}»`)}>Сохранить</Btn></div>
-    </Card>
-    <div className="lg:col-span-2"><Card title="Инциденты (взять на себя · вернуть автоматике)"><Empty /></Card></div>
-  </div>;
-}
-
-const BROADCAST_HISTORY = [
-  { date: "12.10.2026", group: "С истекающей подпиской", text: "Доступ заканчивается через 3 дня — продлите заранее, чтобы не потерять связь.", recipients: 18 },
-  { date: "03.10.2026", group: "На домене «docs.rs»", text: "Домен обновлён, ссылки перевыпущены — бот уже прислал новые.", recipients: 42 },
-  { date: "21.09.2026", group: "Все", text: "Запустили тариф на 12 месяцев: 1 690 ₽ вместо 2 388 ₽.", recipients: 96 },
-];
-
-function Broadcasts({ ask }: { ask: Ask }) {
-  const [group, setGroup] = useState("Все"); const [text, setText] = useState(""); const [domain, setDomain] = useState("");
-  return <div className="space-y-4">
-    <Card title="Новая рассылка">
-      <label className="block text-xs font-semibold text-muted-foreground">Кому
-        <select value={group} onChange={e => setGroup(e.target.value)} className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground">
-          <option>Все</option><option>С истекающей подпиской</option><option>На определённом домене</option></select></label>
-      {group === "На определённом домене" && <div className="mt-3"><Field label="Домен" placeholder="docs.rs" value={domain} onChange={e => setDomain(e.target.value)} /></div>}
-      <label className="mt-3 block text-xs font-semibold text-muted-foreground">Текст
-        <textarea rows={4} value={text} onChange={e => setText(e.target.value)} className="mt-1 w-full rounded-lg border border-border bg-background p-3 text-sm text-foreground" /></label>
-      <div className="mt-3">
-        {text.trim()
-          ? <Btn onClick={() => ask(`Отправить рассылку: «${group}${group === "На определённом домене" ? ` — ${domain || "—"}` : ""}»`)}>Отправить</Btn>
-          : <button disabled className="cursor-not-allowed rounded-lg bg-muted px-3 py-2 text-sm font-semibold text-muted-foreground">Отправить</button>}
-      </div>
-      <p className="mt-2 text-xs text-muted-foreground">Без текста кнопка неактивна; отправка всегда спросит подтверждение и причину.</p>
-    </Card>
-    <Card title="История рассылок (пример оформления)">
-      <ul className="space-y-3">
-        {BROADCAST_HISTORY.map((b, i) => (
-          <li key={i} className="rounded-xl border border-border p-4">
-            <div className="flex items-center justify-between text-xs text-muted-foreground"><span>{b.date}</span><span className="rounded-full bg-muted px-2 py-0.5 font-semibold">{b.group}</span></div>
-            <p className="mt-2 text-sm">{b.text}</p>
-            <p className="mt-1 text-xs text-muted-foreground">Получателей: {b.recipients}</p>
-          </li>
-        ))}
-      </ul>
-      <p className="mt-3 text-xs text-muted-foreground">Это тестовые примеры, чтобы показать оформление. Реальной истории пока нет.</p>
-    </Card>
-  </div>;
-}
-
-function Settings({ ask }: { ask: Ask }) {
-  const [admin, setAdmin] = useState(""); const [role, setRole] = useState("Оператор"); const [token, setToken] = useState("");
-  return <div className="grid gap-4 lg:grid-cols-2">
-    <Card title="Админы">
-      <div className="flex gap-2"><div className="flex-1"><Field label="@username" value={admin} onChange={e => setAdmin(e.target.value)} /></div>
-        <select value={role} onChange={e => setRole(e.target.value)} className="self-end rounded-lg border border-border bg-background px-3 py-2 text-sm"><option>Владелец</option><option>Оператор</option><option>Поддержка</option></select>
-        <div className="self-end"><Btn onClick={() => ask(`Добавить админа «${admin || "—"}» с ролью «${role}»`)}>Добавить</Btn></div></div>
-      <div className="mt-3"><Empty /></div>
-    </Card>
-    <Card title="Токен бота">
-      <Field label="Новый токен" type="password" value={token} onChange={e => setToken(e.target.value)} />
-      <div className="mt-3"><Btn onClick={() => ask("Заменить токен бота")}>Сохранить</Btn></div>
-    </Card>
-    <div className="lg:col-span-2"><Card title="Тексты кнопок и сообщений Mini App"><Empty /></Card></div>
-  </div>;
-}
-
-function AdminPage() {
-  const [section, setSection] = useState<Section>("Пользователи");
-  const [pending, setPending] = useState<PendingAction>(null);
-  const [log, setLog] = useState<string[]>([]);
-  const ask: Ask = (title, onDone) => setPending({ title, onDone });
-  const View = { "Пользователи": Users, "Подписки и тарифы": Plans, "Серверы": Servers, "Домены маскировки": Domains, "Автоматика": Automation, "Рассылки": Broadcasts, "Настройки": Settings }[section];
+// ── Small UI atoms ───────────────────────────────────────────────────────────
+function Card({ title, children, right }: { title: string; children: ReactNode; right?: ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
-      <aside className="w-64 shrink-0 border-r border-border bg-card p-4">
-        <div className="mb-6 px-2 text-xl font-extrabold">Лазейка · админ</div>
-        <nav className="space-y-1">{SECTIONS.map((s, i) => (
-          <button key={s} onClick={() => setSection(s)} className={`w-full rounded-lg px-3 py-2 text-left text-sm ${s === section ? "bg-primary text-primary-foreground font-semibold" : "hover:bg-muted"}`}>{i + 1}. {s}</button>
-        ))}</nav>
-      </aside>
-      <main className="flex-1 p-8">
-        <h1 className="mb-1 text-2xl font-bold">{section}</h1>
-        <p className="mb-6 text-sm text-muted-foreground">Бэкенд пока не подключён — действия не выполняются, только записываются в журнал ниже.</p>
-        <View ask={ask} />
-        <div className="mt-6"><Card title="Журнал действий (эта сессия)">{log.length ? <ul className="space-y-1 text-sm">{log.map((l, i) => <li key={i}>{l}</li>)}</ul> : <Empty />}</Card></div>
-      </main>
-      <AdminConfirm action={pending} onClose={() => setPending(null)} onLog={t => setLog(v => [`${new Date().toLocaleTimeString("ru")} · ${t}`, ...v])} />
+    <section className="rounded-2xl border border-border bg-card p-5">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="font-bold">{title}</h3>
+        {right}
+      </div>
+      {children}
+    </section>
+  );
+}
+function Stat({ label, value, sub }: { label: string; value: string; sub?: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5">
+      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="mt-2 text-2xl font-extrabold">{value}</div>
+      {sub && <div className="mt-1 text-xs text-muted-foreground">{sub}</div>}
     </div>
   );
+}
+
+// ── Login ────────────────────────────────────────────────────────────────────
+function Login({ onSuccess }: { onSuccess: () => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      await api("/api/admin/login", { method: "POST", body: JSON.stringify({ email, password }) });
+      onSuccess();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ошибка входа");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 text-foreground">
+      <form onSubmit={submit} className="w-full max-w-sm rounded-2xl border border-border bg-card p-6">
+        <div className="mb-6 text-xl font-extrabold">Лазейка · админ</div>
+        <label className="block text-xs font-semibold text-muted-foreground">
+          Email
+          <input type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground" />
+        </label>
+        <label className="mt-3 block text-xs font-semibold text-muted-foreground">
+          Пароль
+          <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground" />
+        </label>
+        {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
+        <button disabled={busy} className="mt-5 w-full rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+          {busy ? "Вход…" : "Войти"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+// ── Dashboard ────────────────────────────────────────────────────────────────
+function Dashboard({ role, onLogout }: { role: string; onLogout: () => void }) {
+  const [eco, setEco] = useState<Economics | null>(null);
+  const [users, setUsers] = useState<UserRow[]>([]);
+  const [q, setQ] = useState("");
+  const [pending, setPending] = useState<PendingAction>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const loadEco = useCallback(async () => {
+    try {
+      setEco(await api<Economics>("/api/admin/metrics"));
+    } catch (e) {
+      setToast(e instanceof Error ? e.message : "Ошибка загрузки");
+    }
+  }, []);
+  const loadUsers = useCallback(async (query: string) => {
+    try {
+      const r = await api<{ users: UserRow[] }>(`/api/admin/users?q=${encodeURIComponent(query)}`);
+      setUsers(r.users);
+    } catch (e) {
+      setToast(e instanceof Error ? e.message : "Ошибка загрузки");
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadEco();
+    void loadUsers("");
+  }, [loadEco, loadUsers]);
+
+  const canOperate = role === "operator" || role === "admin";
+
+  const grantDaysPrompt = (u: UserRow) => {
+    const input = window.prompt(`Сколько дней начислить ${u.username ?? u.telegramUserId}?`, "30");
+    if (input === null) return;
+    const days = Number(input);
+    if (!Number.isFinite(days) || days <= 0) { setToast("Некорректное число дней"); return; }
+    act(u, "grant", `Начислить ${days} дн. ${u.username ?? u.telegramUserId}`, { days });
+  };
+
+  const act = (u: UserRow, action: string, title: string, extra?: Record<string, unknown>) => {
+    setPending({
+      title,
+      onDone: async (reason) => {
+        try {
+          await api(`/api/admin/users/${u.id}`, {
+            method: "POST",
+            body: JSON.stringify({ action, reason, ...extra }),
+          });
+          setToast("Готово");
+          await loadUsers(q);
+          await loadEco();
+        } catch (e) {
+          setToast(e instanceof Error ? e.message : "Ошибка");
+        }
+      },
+    });
+  };
+
+  const logout = async () => {
+    await api("/api/admin/logout", { method: "POST" }).catch(() => {});
+    onLogout();
+  };
+
+  return (
+    <div className="min-h-screen bg-background p-6 text-foreground md:p-8">
+      <header className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Лазейка · админ</h1>
+          <p className="text-sm text-muted-foreground">Роль: {role}</p>
+        </div>
+        <button onClick={logout} className="rounded-lg border border-border px-4 py-2 text-sm font-semibold">Выйти</button>
+      </header>
+
+      {/* Economics */}
+      <section className="mb-6">
+        <h2 className="mb-3 text-lg font-bold">Экономика</h2>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <Stat label="Пользователей" value={String(eco?.users.total ?? "—")} />
+          <Stat label="Активных подписок" value={String(eco?.users.activeSubs ?? "—")} sub={`истекло: ${eco?.users.expiredSubs ?? "—"}`} />
+          <Stat label="Выручка за 30 дней" value={eco ? rub(eco.revenue.last30dRub) : "—"} sub={`оплат: ${eco?.revenue.paymentsPaid ?? "—"}`} />
+          <Stat label="Выручка всего" value={eco ? rub(eco.revenue.totalRub) : "—"} />
+        </div>
+        {eco && eco.byPlan.length > 0 && (
+          <div className="mt-3">
+            <Card title="По тарифам">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs uppercase text-muted-foreground">
+                    <th className="pb-2">Тариф</th><th className="pb-2">Оплат</th><th className="pb-2">Выручка</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {eco.byPlan.map((p) => (
+                    <tr key={p.planId} className="border-t border-border">
+                      <td className="py-2 font-semibold">{p.planId}</td>
+                      <td className="py-2">{p.count}</td>
+                      <td className="py-2">{rub(p.revenueRub)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Card>
+          </div>
+        )}
+      </section>
+
+      {/* Users */}
+      <section>
+        <h2 className="mb-3 text-lg font-bold">Пользователи</h2>
+        <Card
+          title="Поиск"
+          right={
+            <form
+              onSubmit={(e) => { e.preventDefault(); void loadUsers(q); }}
+              className="flex gap-2"
+            >
+              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="@username, имя или ID" className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm" />
+              <button className="rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground">Найти</button>
+            </form>
+          }
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs uppercase text-muted-foreground">
+                  <th className="pb-2">Пользователь</th><th className="pb-2">TG ID</th><th className="pb-2">Статус</th>
+                  <th className="pb-2">Тариф</th><th className="pb-2">Доступ до</th><th className="pb-2">Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.length === 0 && (
+                  <tr><td colSpan={6} className="py-8 text-center text-muted-foreground">Нет данных</td></tr>
+                )}
+                {users.map((u) => (
+                  <tr key={u.id} className="border-t border-border align-middle">
+                    <td className="py-2">{u.username ? `@${u.username}` : u.firstName ?? "—"}</td>
+                    <td className="py-2 text-muted-foreground">{u.telegramUserId}</td>
+                    <td className="py-2">
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${u.status === "active" ? "bg-primary/15 text-primary" : u.status === "canceled" ? "bg-destructive/15 text-destructive" : "bg-muted text-muted-foreground"}`}>{u.status}</span>
+                    </td>
+                    <td className="py-2">{u.planId ?? "—"}</td>
+                    <td className="py-2">{fmtDate(u.currentPeriodEnd)}</td>
+                    <td className="py-2">
+                      {canOperate ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          <MiniBtn onClick={() => grantDaysPrompt(u)}>Начислить дни</MiniBtn>
+                          <MiniBtn onClick={() => act(u, "rotate", `Перевыпустить ссылку ${u.username ?? u.telegramUserId}`)}>Перевыпуск</MiniBtn>
+                          {u.status === "canceled"
+                            ? <MiniBtn onClick={() => act(u, "resume", `Разблокировать ${u.username ?? u.telegramUserId}`)}>Разблок.</MiniBtn>
+                            : <MiniBtn danger onClick={() => act(u, "suspend", `Заблокировать ${u.username ?? u.telegramUserId}`)}>Блок</MiniBtn>}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">только просмотр</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </section>
+
+      {toast && (
+        <div onClick={() => setToast(null)} className="fixed bottom-4 right-4 cursor-pointer rounded-lg bg-foreground px-4 py-2 text-sm text-background shadow-lg">{toast}</div>
+      )}
+      <AdminConfirm action={pending} onClose={() => setPending(null)} onLog={() => {}} />
+    </div>
+  );
+}
+
+function MiniBtn({ children, onClick, danger }: { children: ReactNode; onClick: () => void; danger?: boolean }) {
+  return (
+    <button onClick={onClick} className={`rounded-md px-2 py-1 text-xs font-semibold ${danger ? "border border-destructive text-destructive" : "border border-border hover:bg-muted"}`}>
+      {children}
+    </button>
+  );
+}
+
+// ── Page (auth gate) ─────────────────────────────────────────────────────────
+function AdminPage() {
+  const [state, setState] = useState<{ ready: boolean; role: string | null }>({ ready: false, role: null });
+
+  const check = useCallback(async () => {
+    try {
+      const me = await api<{ role: string }>("/api/admin/me");
+      setState({ ready: true, role: me.role });
+    } catch {
+      setState({ ready: true, role: null });
+    }
+  }, []);
+
+  useEffect(() => { void check(); }, [check]);
+
+  if (!state.ready) return <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">Загрузка…</div>;
+  if (!state.role) return <Login onSuccess={check} />;
+  return <Dashboard role={state.role} onLogout={() => setState({ ready: true, role: null })} />;
 }
