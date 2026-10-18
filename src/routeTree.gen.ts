@@ -15,6 +15,23 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ReferralsRouteImport } from './routes/referrals'
+import { Route as ApiConfigRouteImport } from './routes/api/config'
+import { Route as ApiPlansRouteImport } from './routes/api/plans'
+import { Route as ApiAdminBootstrapRouteImport } from './routes/api/admin/bootstrap'
+import { Route as ApiAdminBotRouteImport } from './routes/api/admin/bot'
+import { Route as ApiAdminLoginRouteImport } from './routes/api/admin/login'
+import { Route as ApiAdminLogoutRouteImport } from './routes/api/admin/logout'
+import { Route as ApiAdminMeRouteImport } from './routes/api/admin/me'
+import { Route as ApiAdminMetricsRouteImport } from './routes/api/admin/metrics'
+import { Route as ApiMeIndexRouteImport } from './routes/api/me/index'
+import { Route as ApiMeLinkRouteImport } from './routes/api/me/link'
+import { Route as ApiMePaymentsRouteImport } from './routes/api/me/payments'
+import { Route as ApiMeReferralsRouteImport } from './routes/api/me/referrals'
+import { Route as ApiPayIndexRouteImport } from './routes/api/pay/index'
+import { Route as ApiPayWebhookRouteImport } from './routes/api/pay/webhook'
+import { Route as ApiTgWebhookRouteImport } from './routes/api/tg/webhook'
+import { Route as ApiAdminUsersIndexRouteImport } from './routes/api/admin/users/index'
+import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +63,91 @@ const ReferralsRoute = ReferralsRouteImport.update({
   path: '/referrals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiConfigRoute = ApiConfigRouteImport.update({
+  id: '/api/config',
+  path: '/api/config',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPlansRoute = ApiPlansRouteImport.update({
+  id: '/api/plans',
+  path: '/api/plans',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminBootstrapRoute = ApiAdminBootstrapRouteImport.update({
+  id: '/api/admin/bootstrap',
+  path: '/api/admin/bootstrap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminBotRoute = ApiAdminBotRouteImport.update({
+  id: '/api/admin/bot',
+  path: '/api/admin/bot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminLoginRoute = ApiAdminLoginRouteImport.update({
+  id: '/api/admin/login',
+  path: '/api/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminLogoutRoute = ApiAdminLogoutRouteImport.update({
+  id: '/api/admin/logout',
+  path: '/api/admin/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminMeRoute = ApiAdminMeRouteImport.update({
+  id: '/api/admin/me',
+  path: '/api/admin/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminMetricsRoute = ApiAdminMetricsRouteImport.update({
+  id: '/api/admin/metrics',
+  path: '/api/admin/metrics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMeIndexRoute = ApiMeIndexRouteImport.update({
+  id: '/api/me/',
+  path: '/api/me/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMeLinkRoute = ApiMeLinkRouteImport.update({
+  id: '/api/me/link',
+  path: '/api/me/link',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMePaymentsRoute = ApiMePaymentsRouteImport.update({
+  id: '/api/me/payments',
+  path: '/api/me/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMeReferralsRoute = ApiMeReferralsRouteImport.update({
+  id: '/api/me/referrals',
+  path: '/api/me/referrals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPayIndexRoute = ApiPayIndexRouteImport.update({
+  id: '/api/pay/',
+  path: '/api/pay/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPayWebhookRoute = ApiPayWebhookRouteImport.update({
+  id: '/api/pay/webhook',
+  path: '/api/pay/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTgWebhookRoute = ApiTgWebhookRouteImport.update({
+  id: '/api/tg/webhook',
+  path: '/api/tg/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminUsersIndexRoute = ApiAdminUsersIndexRouteImport.update({
+  id: '/api/admin/users/',
+  path: '/api/admin/users/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
+  id: '/api/admin/users/$id',
+  path: '/api/admin/users/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +156,23 @@ export interface FileRoutesByFullPath {
   '/help': typeof HelpRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
+  '/api/config': typeof ApiConfigRoute
+  '/api/plans': typeof ApiPlansRoute
+  '/api/admin/bootstrap': typeof ApiAdminBootstrapRoute
+  '/api/admin/bot': typeof ApiAdminBotRoute
+  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/me': typeof ApiAdminMeRoute
+  '/api/admin/metrics': typeof ApiAdminMetricsRoute
+  '/api/me/link': typeof ApiMeLinkRoute
+  '/api/me/payments': typeof ApiMePaymentsRoute
+  '/api/me/referrals': typeof ApiMeReferralsRoute
+  '/api/pay/webhook': typeof ApiPayWebhookRoute
+  '/api/tg/webhook': typeof ApiTgWebhookRoute
+  '/api/me/': typeof ApiMeIndexRoute
+  '/api/pay/': typeof ApiPayIndexRoute
+  '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
+  '/api/admin/users/': typeof ApiAdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +181,23 @@ export interface FileRoutesByTo {
   '/help': typeof HelpRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
+  '/api/config': typeof ApiConfigRoute
+  '/api/plans': typeof ApiPlansRoute
+  '/api/admin/bootstrap': typeof ApiAdminBootstrapRoute
+  '/api/admin/bot': typeof ApiAdminBotRoute
+  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/me': typeof ApiAdminMeRoute
+  '/api/admin/metrics': typeof ApiAdminMetricsRoute
+  '/api/me/link': typeof ApiMeLinkRoute
+  '/api/me/payments': typeof ApiMePaymentsRoute
+  '/api/me/referrals': typeof ApiMeReferralsRoute
+  '/api/pay/webhook': typeof ApiPayWebhookRoute
+  '/api/tg/webhook': typeof ApiTgWebhookRoute
+  '/api/me': typeof ApiMeIndexRoute
+  '/api/pay': typeof ApiPayIndexRoute
+  '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
+  '/api/admin/users': typeof ApiAdminUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,12 +207,75 @@ export interface FileRoutesById {
   '/help': typeof HelpRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
+  '/api/config': typeof ApiConfigRoute
+  '/api/plans': typeof ApiPlansRoute
+  '/api/admin/bootstrap': typeof ApiAdminBootstrapRoute
+  '/api/admin/bot': typeof ApiAdminBotRoute
+  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/me': typeof ApiAdminMeRoute
+  '/api/admin/metrics': typeof ApiAdminMetricsRoute
+  '/api/me/link': typeof ApiMeLinkRoute
+  '/api/me/payments': typeof ApiMePaymentsRoute
+  '/api/me/referrals': typeof ApiMeReferralsRoute
+  '/api/pay/webhook': typeof ApiPayWebhookRoute
+  '/api/tg/webhook': typeof ApiTgWebhookRoute
+  '/api/me/': typeof ApiMeIndexRoute
+  '/api/pay/': typeof ApiPayIndexRoute
+  '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
+  '/api/admin/users/': typeof ApiAdminUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/access' | '/admin' | '/help' | '/profile' | '/referrals'
+  fullPaths:
+    | '/'
+    | '/access'
+    | '/admin'
+    | '/help'
+    | '/profile'
+    | '/referrals'
+    | '/api/config'
+    | '/api/plans'
+    | '/api/admin/bootstrap'
+    | '/api/admin/bot'
+    | '/api/admin/login'
+    | '/api/admin/logout'
+    | '/api/admin/me'
+    | '/api/admin/metrics'
+    | '/api/me/link'
+    | '/api/me/payments'
+    | '/api/me/referrals'
+    | '/api/pay/webhook'
+    | '/api/tg/webhook'
+    | '/api/me/'
+    | '/api/pay/'
+    | '/api/admin/users/$id'
+    | '/api/admin/users/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/access' | '/admin' | '/help' | '/profile' | '/referrals'
+  to:
+    | '/'
+    | '/access'
+    | '/admin'
+    | '/help'
+    | '/profile'
+    | '/referrals'
+    | '/api/config'
+    | '/api/plans'
+    | '/api/admin/bootstrap'
+    | '/api/admin/bot'
+    | '/api/admin/login'
+    | '/api/admin/logout'
+    | '/api/admin/me'
+    | '/api/admin/metrics'
+    | '/api/me/link'
+    | '/api/me/payments'
+    | '/api/me/referrals'
+    | '/api/pay/webhook'
+    | '/api/tg/webhook'
+    | '/api/me'
+    | '/api/pay'
+    | '/api/admin/users/$id'
+    | '/api/admin/users'
   id:
     | '__root__'
     | '/'
@@ -85,6 +284,23 @@ export interface FileRouteTypes {
     | '/help'
     | '/profile'
     | '/referrals'
+    | '/api/config'
+    | '/api/plans'
+    | '/api/admin/bootstrap'
+    | '/api/admin/bot'
+    | '/api/admin/login'
+    | '/api/admin/logout'
+    | '/api/admin/me'
+    | '/api/admin/metrics'
+    | '/api/me/link'
+    | '/api/me/payments'
+    | '/api/me/referrals'
+    | '/api/pay/webhook'
+    | '/api/tg/webhook'
+    | '/api/me/'
+    | '/api/pay/'
+    | '/api/admin/users/$id'
+    | '/api/admin/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,6 +310,23 @@ export interface RootRouteChildren {
   HelpRoute: typeof HelpRoute
   ProfileRoute: typeof ProfileRoute
   ReferralsRoute: typeof ReferralsRoute
+  ApiConfigRoute: typeof ApiConfigRoute
+  ApiPlansRoute: typeof ApiPlansRoute
+  ApiAdminBootstrapRoute: typeof ApiAdminBootstrapRoute
+  ApiAdminBotRoute: typeof ApiAdminBotRoute
+  ApiAdminLoginRoute: typeof ApiAdminLoginRoute
+  ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
+  ApiAdminMeRoute: typeof ApiAdminMeRoute
+  ApiAdminMetricsRoute: typeof ApiAdminMetricsRoute
+  ApiMeLinkRoute: typeof ApiMeLinkRoute
+  ApiMePaymentsRoute: typeof ApiMePaymentsRoute
+  ApiMeReferralsRoute: typeof ApiMeReferralsRoute
+  ApiPayWebhookRoute: typeof ApiPayWebhookRoute
+  ApiTgWebhookRoute: typeof ApiTgWebhookRoute
+  ApiMeIndexRoute: typeof ApiMeIndexRoute
+  ApiPayIndexRoute: typeof ApiPayIndexRoute
+  ApiAdminUsersIdRoute: typeof ApiAdminUsersIdRoute
+  ApiAdminUsersIndexRoute: typeof ApiAdminUsersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -140,6 +373,125 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReferralsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/config': {
+      id: '/api/config'
+      path: '/api/config'
+      fullPath: '/api/config'
+      preLoaderRoute: typeof ApiConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/plans': {
+      id: '/api/plans'
+      path: '/api/plans'
+      fullPath: '/api/plans'
+      preLoaderRoute: typeof ApiPlansRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/bootstrap': {
+      id: '/api/admin/bootstrap'
+      path: '/api/admin/bootstrap'
+      fullPath: '/api/admin/bootstrap'
+      preLoaderRoute: typeof ApiAdminBootstrapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/bot': {
+      id: '/api/admin/bot'
+      path: '/api/admin/bot'
+      fullPath: '/api/admin/bot'
+      preLoaderRoute: typeof ApiAdminBotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/login': {
+      id: '/api/admin/login'
+      path: '/api/admin/login'
+      fullPath: '/api/admin/login'
+      preLoaderRoute: typeof ApiAdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/logout': {
+      id: '/api/admin/logout'
+      path: '/api/admin/logout'
+      fullPath: '/api/admin/logout'
+      preLoaderRoute: typeof ApiAdminLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/me': {
+      id: '/api/admin/me'
+      path: '/api/admin/me'
+      fullPath: '/api/admin/me'
+      preLoaderRoute: typeof ApiAdminMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/metrics': {
+      id: '/api/admin/metrics'
+      path: '/api/admin/metrics'
+      fullPath: '/api/admin/metrics'
+      preLoaderRoute: typeof ApiAdminMetricsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/me/': {
+      id: '/api/me/'
+      path: '/api/me'
+      fullPath: '/api/me/'
+      preLoaderRoute: typeof ApiMeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/me/link': {
+      id: '/api/me/link'
+      path: '/api/me/link'
+      fullPath: '/api/me/link'
+      preLoaderRoute: typeof ApiMeLinkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/me/payments': {
+      id: '/api/me/payments'
+      path: '/api/me/payments'
+      fullPath: '/api/me/payments'
+      preLoaderRoute: typeof ApiMePaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/me/referrals': {
+      id: '/api/me/referrals'
+      path: '/api/me/referrals'
+      fullPath: '/api/me/referrals'
+      preLoaderRoute: typeof ApiMeReferralsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pay/': {
+      id: '/api/pay/'
+      path: '/api/pay'
+      fullPath: '/api/pay/'
+      preLoaderRoute: typeof ApiPayIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pay/webhook': {
+      id: '/api/pay/webhook'
+      path: '/api/pay/webhook'
+      fullPath: '/api/pay/webhook'
+      preLoaderRoute: typeof ApiPayWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tg/webhook': {
+      id: '/api/tg/webhook'
+      path: '/api/tg/webhook'
+      fullPath: '/api/tg/webhook'
+      preLoaderRoute: typeof ApiTgWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/users/': {
+      id: '/api/admin/users/'
+      path: '/api/admin/users'
+      fullPath: '/api/admin/users/'
+      preLoaderRoute: typeof ApiAdminUsersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/users/$id': {
+      id: '/api/admin/users/$id'
+      path: '/api/admin/users/$id'
+      fullPath: '/api/admin/users/$id'
+      preLoaderRoute: typeof ApiAdminUsersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -150,6 +502,23 @@ const rootRouteChildren: RootRouteChildren = {
   HelpRoute: HelpRoute,
   ProfileRoute: ProfileRoute,
   ReferralsRoute: ReferralsRoute,
+  ApiConfigRoute: ApiConfigRoute,
+  ApiPlansRoute: ApiPlansRoute,
+  ApiAdminBootstrapRoute: ApiAdminBootstrapRoute,
+  ApiAdminBotRoute: ApiAdminBotRoute,
+  ApiAdminLoginRoute: ApiAdminLoginRoute,
+  ApiAdminLogoutRoute: ApiAdminLogoutRoute,
+  ApiAdminMeRoute: ApiAdminMeRoute,
+  ApiAdminMetricsRoute: ApiAdminMetricsRoute,
+  ApiMeLinkRoute: ApiMeLinkRoute,
+  ApiMePaymentsRoute: ApiMePaymentsRoute,
+  ApiMeReferralsRoute: ApiMeReferralsRoute,
+  ApiPayWebhookRoute: ApiPayWebhookRoute,
+  ApiTgWebhookRoute: ApiTgWebhookRoute,
+  ApiMeIndexRoute: ApiMeIndexRoute,
+  ApiPayIndexRoute: ApiPayIndexRoute,
+  ApiAdminUsersIdRoute: ApiAdminUsersIdRoute,
+  ApiAdminUsersIndexRoute: ApiAdminUsersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

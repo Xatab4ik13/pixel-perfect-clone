@@ -9,10 +9,10 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Keep frontend demo access in DemoProvider so payment, home and account share the same mock state without auth or database calls.
-- Keep demo plan definitions and payment arithmetic in demo-access so access and payment use one source of truth.
-- Keep the connection instructions in ConnectionGuide so the home action and disclosure share the same content.
-- Keep home benefit artwork in HomeBenefits; homepage tariffs reuse DEMO_PLANS and PaymentSheet to preserve the existing mock checkout flow.
-- Keep invitation content in Invitations within the account; redirect the legacy referrals URL so there is only one invitation view.
-- Keep display-only payment history fixtures in demo-access separate from DemoProvider access balances so historical examples cannot activate unpaid access.
-- Keep the desktop admin at /admin frontend-only; every mutating action goes through AdminConfirm (confirmation + required reason) so the rule lives in one place.
+- Use the imported TanStack application at the project root as the single source for frontend and VPS backend; this avoids maintaining divergent application copies.
+- Preserve existing raw HTTP endpoint paths and load their implementations from src/server/http-routes inside handlers; this keeps provider contracts stable and server dependencies out of browser bundles.
+- Keep access state in DemoProvider and existing Telegram signature verification on the server; browser state must never establish live identity or access.
+- Keep network provisioning behind telemt.server.ts; custom Rust gateway services are intentionally not imported.
+- Keep the target preview bootstrap and pinned framework dependencies; VPS builds select the existing Node preset through NITRO_PRESET=node-server.
+- Keep archived database migrations under vps/drizzle and target only DATABASE_URL in Drizzle configuration; never apply imported VPS migrations to the managed Cloud database.
+- Keep mutating user administration behind AdminConfirm and require the reason again on the server; UI confirmation is not an authorization boundary.
