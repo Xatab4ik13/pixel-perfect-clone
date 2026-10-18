@@ -1,0 +1,114 @@
+[
+  {
+    "capability": "application code",
+    "source": "lazeyka-project.zip",
+    "outcome": "import",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "schema",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "records",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "auth identities",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "authorization",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "uploaded assets",
+    "source": "lazeyka-project.zip",
+    "outcome": "import",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "payment provider",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "telemt",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "telegram bot",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "public endpoints",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "callbacks and webhooks",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "schedules",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "secrets",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "server cutover",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "live verification",
+    "source": "lazeyka-project.zip",
+    "outcome": "preserve on existing VPS",
+    "status": "pending",
+    "next_action": "Import source; no live server changes or database migration in this task"
+  },
+  {
+    "capability": "custom Rust engine",
+    "source": "services/gateway",
+    "outcome": "omit by explicit user request",
+    "status": "accepted",
+    "next_action": null
+  }
+]
