@@ -7,11 +7,12 @@ import tabHelp from "@/assets/icon-tab-help.png";
 import tabProfile from "@/assets/icon-profile.png";
 import { useDemo } from "@/components/DemoProvider";
 import { TelegramGate } from "@/components/TelegramGate";
+import { canShowApp } from "@/lib/app-visibility";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { isTelegram, loading } = useDemo();
   if (loading) return <div className="min-h-screen bg-gradient-sky" />;
-  if (!isTelegram) return <TelegramGate />;
+  if (!canShowApp(isTelegram, import.meta.env.DEV)) return <TelegramGate />;
 
   const tabs = [
     { to: "/", label: "Главная", icon: tabHome },
