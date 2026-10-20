@@ -164,6 +164,16 @@
 @utility bg-gradient-success { background-image: var(--gradient-success); }
 @utility bg-gradient-help { background-image: var(--gradient-help); }
 
+.logo-glow { position: relative; }
+.logo-glow::before { content: ""; position: absolute; inset: -30%; z-index: -1; border-radius: 9999px; background: radial-gradient(circle, color-mix(in oklab, var(--primary) 28%, transparent) 0%, transparent 65%); filter: blur(12px); }
+@keyframes rise-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.stagger > * { animation: rise-in 0.45s cubic-bezier(.2,.7,.2,1) both; }
+.stagger > *:nth-child(2) { animation-delay: 50ms; } .stagger > *:nth-child(3) { animation-delay: 100ms; }
+.stagger > *:nth-child(4) { animation-delay: 150ms; } .stagger > *:nth-child(5) { animation-delay: 200ms; }
+.stagger > *:nth-child(6) { animation-delay: 250ms; } .stagger > *:nth-child(n+7) { animation-delay: 300ms; }
+@media (prefers-reduced-motion: reduce) { .stagger > * { animation: none; } }
+.glass-nav { background: color-mix(in oklab, var(--card) 65%, transparent); backdrop-filter: blur(20px) saturate(160%); }
+.access-ring { background: conic-gradient(var(--success) calc(var(--p) * 1%), var(--success-soft) 0); }
 .payment-qr { color: var(--foreground); }
 .benefit-cutout { filter: drop-shadow(0 12px 10px var(--benefit-shadow)); }
 .referral-ring { background: conic-gradient(var(--primary) 60%, var(--sky) 0); }

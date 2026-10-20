@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronDown, Send } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, Search, Send } from "lucide-react";
 import { AppShell, IconImg, Logo } from "@/components/AppShell";
 import headset from "@/assets/icon-headset.png";
 
@@ -25,6 +26,8 @@ const faq = [
 ];
 
 function Help() {
+  const [q, setQ] = useState("");
+  const list = faq.filter(([a, b]) => (a + " " + b).toLowerCase().includes(q.trim().toLowerCase()));
   return (
     <AppShell>
       <Logo small />
@@ -38,8 +41,13 @@ function Help() {
       </div>
 
       <h2 className="mt-8 text-lg font-bold">Частые вопросы</h2>
+      <label className="mt-3 flex h-12 items-center gap-2 rounded-2xl border border-border bg-card px-4 shadow-soft">
+        <Search className="h-4 w-4 text-muted-foreground" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Поиск по вопросам" aria-label="Поиск по вопросам" className="h-full flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
+      </label>
       <div className="mt-3 space-y-3">
-        {faq.map(([q, a]) => (
+        {list.length === 0 && <p className="rounded-2xl bg-card p-4 text-sm text-muted-foreground shadow-soft">Ничего не нашли — напишите нам, поможем.</p>}
+        {list.map(([q, a]) => (
           <details key={q} className="group rounded-2xl bg-card p-4 shadow-soft">
             <summary className="flex cursor-pointer list-none items-center gap-3 font-semibold [&::-webkit-details-marker]:hidden">
               <span className="flex-1">{q}</span>
