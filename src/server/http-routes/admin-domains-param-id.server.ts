@@ -1,5 +1,5 @@
 import { requireAdmin, recordAudit, AdminAuthError } from "@/server/admin.server";
-import { setDomainStatus, checkStoredDomain, syncTelemtDomains, DomainError } from "@/server/domains.server";
+import { makePrimary, checkStoredDomain, DomainError } from "@/server/domains.server";
 import { json } from "@/server/http";
 
 export const handlers = {
@@ -10,14 +10,13 @@ export const handlers = {
         await requireAdmin(request, "operator");
         return json({ ok: true, result: await checkStoredDomain(params.id) });
       }
+      if (body.action !== "make_primary") return json({ error: "unknown action" }, { status: 400 });
       const session = await requireAdmin(request, "admin");
       const reason = (body.reason ?? "").trim();
       if (!reason) return json({ error: "reason required" }, { status: 400 });
-      if (body.action !== "disable" && body.action !== "enable") return json({ error: "unknown action" }, { status: 400 });
-      await setDomainStatus(params.id, body.action === "disable" ? "disabled" : "active");
-      const sync = await syncTelemtDomains().catch(() => ({ restartRequired: true }));
-      await recordAudit(session.sub, `domain.${body.action}`, null, reason, { domainId: params.id });
-      return json({ ok: true, ...sync });
+      const r = await makePrimary(params.id);
+      await recordAudit(session.sub, "domain.make_primary", null, reason, { domain: r.domain, reissued: r.reissued });
+      return json({ ok: true, ...r });
     } catch (e) {
       if (e instanceof AdminAuthError) return json({ error: e.message }, { status: e.status });
       if (e instanceof DomainError) return json({ error: e.message }, { status: 400 });
