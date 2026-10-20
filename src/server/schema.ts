@@ -171,7 +171,7 @@ export type Payment = typeof payments.$inferSelect;
 export type AuditEvent = typeof auditEvents.$inferSelect;
 export type Referral = typeof referrals.$inferSelect;
 
-/** Pool of FakeTLS mask domains served by the telemt node (censorship.tls_domains). */
+/** FakeTLS mask domains on the telemt node: one primary for everyone, the rest checked reserves. */
 export const maskDomains = pgTable("mask_domains", {
   id: uuid("id").primaryKey().defaultRandom(),
   domain: text("domain").notNull().unique(),
@@ -180,6 +180,7 @@ export const maskDomains = pgTable("mask_domains", {
   lastOk: boolean("last_ok"),
   lastError: text("last_error"),
   failCount: integer("fail_count").notNull().default(0),
+  isPrimary: boolean("is_primary").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 export type MaskDomain = typeof maskDomains.$inferSelect;
