@@ -294,6 +294,7 @@ interface DomainRow {
   lastOk: boolean | null;
   lastError: string | null;
   failCount: number;
+  isPrimary: boolean;
   assigned: number;
 }
 
@@ -314,9 +315,9 @@ function DomainsSection({
 
   const load = useCallback(async () => {
     try {
-      const r = await api<{ domains: DomainRow[]; defaultDomain: string }>("/api/admin/domains");
+      const r = await api<{ domains: DomainRow[]; primary: string }>("/api/admin/domains");
       setRows(r.domains);
-      setDef(r.defaultDomain);
+      setDef(r.primary);
     } catch (e) {
       setToast(e instanceof Error ? e.message : "Ошибка загрузки");
     }
@@ -344,14 +345,13 @@ function DomainsSection({
     });
   };
 
-  const toggle = (d: DomainRow) => {
-    const action = d.status === "active" ? "disable" : "enable";
+  const makePrimary = (d: DomainRow) => {
     setPending({
-      title: action === "disable" ? `Выключить ${d.domain} и перевыпустить ссылки (${d.assigned})` : `Включить ${d.domain}`,
+      title: `Сделать ${d.domain} основным и перевыпустить ссылки всем`,
       onDone: async (reason) => {
         try {
-          const r = await api<{ restartRequired?: boolean }>(`/api/admin/domains/${d.id}`, { method: "POST", body: JSON.stringify({ action, reason }) });
-          setToast(restartNote(r));
+          const r = await api<{ reissued: number }>(`/api/admin/domains/${d.id}`, { method: "POST", body: JSON.stringify({ action: "make_primary", reason }) });
+          setToast(`Готово: ${d.domain} основной, обновлено ссылок: ${r.reissued}`);
           await load();
         } catch (e) {
           setToast(e instanceof Error ? e.message : "Ошибка");
@@ -374,7 +374,7 @@ function DomainsSection({
     <section className="mt-6">
       <h2 className="mb-3 text-lg font-bold">Домены маскировки</h2>
       <Card
-        title={`По умолчанию: ${def || "—"}`}
+        title={`Основной домен (у всех): ${def || "—"}`}
         right={
           isAdmin ? (
             <form onSubmit={(e) => { e.preventDefault(); add(); }} className="flex gap-2">
@@ -400,8 +400,8 @@ function DomainsSection({
                 <tr key={d.id} className="border-t border-border align-middle">
                   <td className="py-2 font-semibold">{d.domain}</td>
                   <td className="py-2">
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${d.status === "active" ? "bg-primary/15 text-primary" : "bg-destructive/15 text-destructive"}`}>
-                      {d.status === "active" ? "работает" : "выключен"}
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${d.isPrimary ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>
+                      {d.isPrimary ? "основной" : "резерв"}
                     </span>
                   </td>
                   <td className="py-2 text-xs">
@@ -415,10 +415,8 @@ function DomainsSection({
                   <td className="py-2">
                     <div className="flex flex-wrap gap-1.5">
                       {canCheck && <MiniBtn onClick={() => void check(d)}>Проверить</MiniBtn>}
-                      {isAdmin && (
-                        <MiniBtn danger={d.status === "active"} onClick={() => toggle(d)}>
-                          {d.status === "active" ? "Выключить" : "Включить"}
-                        </MiniBtn>
+                      {isAdmin && !d.isPrimary && (
+                        <MiniBtn onClick={() => makePrimary(d)}>Сделать основным</MiniBtn>
                       )}
                     </div>
                   </td>
