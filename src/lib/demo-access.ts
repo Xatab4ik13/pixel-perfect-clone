@@ -1,7 +1,7 @@
 export const DEMO_PLANS = [
-  { id: 'month', name: '1 месяц', price: 199, days: 30 },
-  { id: 'quarter', name: '3 месяца', price: 499, days: 90 },
-  { id: 'year', name: '12 месяцев', price: 1690, days: 365 },
+  { id: 'month', name: '1 месяц', price: 349, days: 30 },
+  { id: 'quarter', name: '3 месяца', price: 849, days: 90 },
+  { id: 'year', name: '12 месяцев', price: 2490, days: 365 },
 ] as const;
 export type DemoPlan = typeof DEMO_PLANS[number];
 export type DemoPayment = { name: string; price: number; days: number; paidAt?: string };

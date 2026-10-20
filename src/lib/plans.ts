@@ -16,9 +16,9 @@ export interface Plan {
 }
 
 export const PLANS: readonly Plan[] = [
-  { id: "month", name: "1 месяц", price: 199, priceKopecks: 19900, days: 30, maxUniqueIps: 3 },
-  { id: "quarter", name: "3 месяца", price: 499, priceKopecks: 49900, days: 90, maxUniqueIps: 4 },
-  { id: "year", name: "12 месяцев", price: 1690, priceKopecks: 169000, days: 365, maxUniqueIps: 5 },
+  { id: "month", name: "1 месяц", price: 349, priceKopecks: 34900, days: 30, maxUniqueIps: 3 },
+  { id: "quarter", name: "3 месяца", price: 849, priceKopecks: 84900, days: 90, maxUniqueIps: 4 },
+  { id: "year", name: "12 месяцев", price: 2490, priceKopecks: 249000, days: 365, maxUniqueIps: 5 },
 ] as const;
 
 export type PlanId = Plan["id"];
