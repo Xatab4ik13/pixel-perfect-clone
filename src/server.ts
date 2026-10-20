@@ -44,8 +44,19 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+let jobsStarted = false;
+function startJobsOnce() {
+  if (jobsStarted) return;
+  jobsStarted = true;
+  // VPS node process only (needs DATABASE_URL); a no-op in the preview.
+  void import("./server/background.server")
+    .then((m) => m.startBackgroundJobs())
+    .catch((e) => console.error("[jobs] start failed", e));
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    startJobsOnce();
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);

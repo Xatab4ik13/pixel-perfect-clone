@@ -275,6 +275,8 @@ function Dashboard({ role, onLogout }: { role: string; onLogout: () => void }) {
         </Card>
       </section>
 
+      <BroadcastSection role={role} setPending={setPending} setToast={setToast} />
+
       <DomainsSection role={role} setPending={setPending} setToast={setToast} />
 
       {toast && (
@@ -282,6 +284,134 @@ function Dashboard({ role, onLogout }: { role: string; onLogout: () => void }) {
       )}
       <AdminConfirm action={pending} onClose={() => setPending(null)} onLog={() => {}} />
     </div>
+  );
+}
+
+// ── Broadcast ────────────────────────────────────────────────────────────────
+interface BroadcastJob {
+  startedAt: string;
+  finishedAt: string | null;
+  total: number;
+  sent: number;
+  failed: number;
+  blocked: number;
+}
+
+function BroadcastSection({
+  role,
+  setPending,
+  setToast,
+}: {
+  role: string;
+  setPending: (p: PendingAction) => void;
+  setToast: (s: string | null) => void;
+}) {
+  const [text, setText] = useState("");
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [job, setJob] = useState<BroadcastJob | null>(null);
+  const isAdmin = role === "admin";
+  const limit = photos.length > 0 ? 1024 : 4096;
+
+  const load = useCallback(async () => {
+    try {
+      setJob((await api<{ job: BroadcastJob | null }>("/api/admin/broadcast")).job);
+    } catch { /* ignore */ }
+  }, []);
+  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    if (!job || job.finishedAt) return;
+    const t = setInterval(() => void load(), 3000);
+    return () => clearInterval(t);
+  }, [job, load]);
+
+  const previews = photos.map((f) => URL.createObjectURL(f));
+  useEffect(() => () => previews.forEach((u) => URL.revokeObjectURL(u)), [previews]);
+
+  const send = () => {
+    if (!text.trim() && photos.length === 0) { setToast("Добавьте текст или фото"); return; }
+    if (text.length > limit) { setToast(`Текст длиннее ${limit} знаков`); return; }
+    setPending({
+      title: `Отправить рассылку всем пользователям${photos.length ? ` (${photos.length} фото)` : ""}`,
+      onDone: async (reason) => {
+        const fd = new FormData();
+        fd.set("text", text);
+        fd.set("reason", reason);
+        photos.forEach((p) => fd.append("photos", p));
+        const res = await fetch("/api/admin/broadcast", { method: "POST", body: fd });
+        const data = (await res.json().catch(() => ({}))) as { error?: string; job?: BroadcastJob };
+        if (!res.ok) { setToast(data.error ?? `HTTP ${res.status}`); return; }
+        setJob(data.job ?? null);
+        setText("");
+        setPhotos([]);
+        setToast("Рассылка запущена");
+      },
+    });
+  };
+
+  return (
+    <section className="mt-6">
+      <h2 className="mb-3 text-lg font-bold">Рассылка в бот</h2>
+      <Card title="Всем пользователям · кнопка «Открыть Лазейку»">
+        {isAdmin ? (
+          <div className="space-y-3">
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={5}
+              placeholder="Текст новости или рекламы. Можно <b>жирный</b>, <i>курсив</i>, <a href=&quot;…&quot;>ссылка</a>."
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+            />
+            <div className={`text-right text-xs ${text.length > limit ? "text-destructive" : "text-muted-foreground"}`}>{text.length} / {limit}</div>
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm font-semibold hover:bg-muted">
+                Добавить фото
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files ?? []);
+                    setPhotos((p) => [...p, ...files].slice(0, 10));
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+              <span className="text-xs text-muted-foreground">до 10 фото, каждое до 10 МБ</span>
+            </div>
+            {photos.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {photos.map((p, i) => (
+                  <div key={i} className="relative">
+                    <img src={previews[i]} alt={p.name} className="h-20 w-20 rounded-lg border border-border object-cover" />
+                    <button
+                      onClick={() => setPhotos((ps) => ps.filter((_, j) => j !== i))}
+                      className="absolute -right-1.5 -top-1.5 h-5 w-5 rounded-full bg-destructive text-xs text-destructive-foreground"
+                      aria-label="Убрать фото"
+                    >×</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button onClick={send} disabled={Boolean(job && !job.finishedAt)} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+              Отправить всем
+            </button>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">Рассылку может отправлять только администратор.</p>
+        )}
+        <div className="mt-4 border-t border-border pt-3 text-sm">
+          {job ? (
+            <span className="text-muted-foreground">
+              {job.finishedAt ? "Последняя рассылка" : "Идёт рассылка"} · {new Date(job.startedAt).toLocaleString("ru-RU")} ·
+              доставлено {job.sent} из {job.total} · заблокировали бота {job.blocked} · ошибок {job.failed}
+            </span>
+          ) : (
+            <span className="text-muted-foreground">Нет данных</span>
+          )}
+        </div>
+      </Card>
+    </section>
   );
 }
 
