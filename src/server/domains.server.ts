@@ -1,91 +1,86 @@
-// Mask-domain pool (server-only): assignment, health checks, auto-disable and
-// link reissue. One telemt node serves all domains via censorship.tls_domains;
-// the user key stays the same, only the SNI part of the link changes.
+// Mask domains (server-only). Every user gets the same primary domain with
+// their own key; reserve domains are checked and switched to manually by staff.
+// Switching rebuilds every link with the new domain (same key) and DMs users.
+// One telemt node serves all domains via censorship.tls_domains.
 import dns from "node:dns/promises";
 import tls from "node:tls";
-import { and, eq, isNotNull, sql } from "drizzle-orm";
+import { and, eq, isNotNull, ne, or, isNull, sql } from "drizzle-orm";
 import { getDb } from "./db.server";
 import { maskDomains, subscriptions, users, type MaskDomain } from "./schema";
 import { buildProxyLink } from "./link";
 import { env } from "./env.server";
 import { telemt } from "./telemt.server";
 import { sendTelegramMessage } from "./telegram-notify.server";
-import { chooseDomain, normalizeDomain, shouldDisable, type DomainCandidate } from "@/lib/mask-domains";
+import { normalizeDomain, primaryDomain } from "@/lib/mask-domains";
 import { computeAccess } from "@/lib/subscription";
 
 const CHECK_TIMEOUT_MS = 6000;
 const MONITOR_INTERVAL_MS = 15 * 60 * 1000;
 
-async function candidates(): Promise<DomainCandidate[]> {
-  const db = getDb();
-  const rows = await db.select().from(maskDomains);
-  const counts = await db
-    .select({ d: subscriptions.sniDomain, n: sql<number>`count(*)::int` })
-    .from(subscriptions)
-    .where(isNotNull(subscriptions.sniDomain))
-    .groupBy(subscriptions.sniDomain);
-  const byDomain = new Map(counts.map((c) => [c.d, Number(c.n)]));
-  return rows.map((r) => ({ domain: r.domain, status: r.status, lastOk: r.lastOk, assigned: byDomain.get(r.domain) ?? 0 }));
-}
+export class DomainError extends Error {}
 
-/** Domain for a link: keep the user's current one if still active, else pick a new one. */
-export async function resolveSniFor(current: string | null): Promise<string> {
+/** The domain baked into every issued link. */
+export async function currentPrimaryDomain(): Promise<string> {
   ensureDomainMonitor();
-  const list = await candidates();
-  if (current) {
-    const cur = list.find((c) => c.domain === current);
-    if (cur && cur.status === "active") return current;
-    if (!cur && current === env.proxySni()) {
-      // Legacy/default domain: keep it unless the pool has something usable.
-      return chooseDomain(list) ?? current;
-    }
-  }
-  return chooseDomain(list, current) ?? env.proxySni();
+  const rows = await getDb().select({ domain: maskDomains.domain, isPrimary: maskDomains.isPrimary }).from(maskDomains);
+  return primaryDomain(rows, env.proxySni());
 }
 
 export interface DomainRow extends MaskDomain {
   assigned: number;
 }
 
-export async function listDomains(): Promise<DomainRow[]> {
+export async function listDomains(): Promise<{ domains: DomainRow[]; primary: string }> {
   ensureDomainMonitor();
   const db = getDb();
   const rows = await db.select().from(maskDomains).orderBy(maskDomains.createdAt);
-  const list = await candidates();
-  return rows.map((r) => ({ ...r, assigned: list.find((c) => c.domain === r.domain)?.assigned ?? 0 }));
+  const counts = await db
+    .select({ d: subscriptions.sniDomain, n: sql<number>`count(*)::int` })
+    .from(subscriptions)
+    .where(isNotNull(subscriptions.link))
+    .groupBy(subscriptions.sniDomain);
+  const by = new Map(counts.map((c) => [c.d, Number(c.n)]));
+  return {
+    domains: rows.map((r) => ({ ...r, assigned: by.get(r.domain) ?? 0 })),
+    primary: primaryDomain(rows, env.proxySni()),
+  };
 }
 
-/** Push the domain list to telemt (censorship.tls_domains). May require a telemt restart. */
+/** Push all domains to telemt (censorship.tls_domains). tls_domains needs a telemt restart. */
 export async function syncTelemtDomains(): Promise<{ restartRequired: boolean }> {
   if (env.telemtStub()) return { restartRequired: false };
-  const db = getDb();
-  const rows = await db.select({ domain: maskDomains.domain }).from(maskDomains);
+  const rows = await getDb().select({ domain: maskDomains.domain }).from(maskDomains);
   return telemt.setTlsDomains(rows.map((r) => r.domain));
 }
 
+/** Add a reserve domain (checked first). It is not used until made primary. */
 export async function addDomain(input: string): Promise<{ domain: string; restartRequired: boolean }> {
   const domain = normalizeDomain(input);
   if (!domain) throw new DomainError("Некорректный домен");
   const check = await checkDomain(domain);
   if (!check.ok) throw new DomainError(`Домен не прошёл проверку: ${check.error}`);
-  const db = getDb();
-  await db
+  await getDb()
     .insert(maskDomains)
-    .values({ domain, status: "active", lastOk: true, lastCheckAt: new Date(), failCount: 0 })
+    .values({ domain, lastOk: true, lastCheckAt: new Date(), failCount: 0 })
     .onConflictDoNothing();
   const { restartRequired } = await syncTelemtDomains();
   return { domain, restartRequired };
 }
 
-export async function setDomainStatus(id: string, status: "active" | "disabled"): Promise<void> {
+/** Make a reserve the primary domain and reissue every link with it. */
+export async function makePrimary(id: string): Promise<{ domain: string; reissued: number }> {
   const db = getDb();
-  const rows = await db.update(maskDomains).set({ status }).where(eq(maskDomains.id, id)).returning();
-  const d = rows[0];
-  if (!d) throw new DomainError("Домен не найден");
-  if (status === "disabled") await reissueUsersOf(d.domain);
+  const row = (await db.select().from(maskDomains).where(eq(maskDomains.id, id)).limit(1))[0];
+  if (!row) throw new DomainError("Домен не найден");
+  const check = await checkDomain(row.domain);
+  if (!check.ok) throw new DomainError(`Домен не прошёл проверку: ${check.error}`);
+  await db.transaction(async (tx) => {
+    await tx.update(maskDomains).set({ isPrimary: false }).where(eq(maskDomains.isPrimary, true));
+    await tx.update(maskDomains).set({ isPrimary: true, lastOk: true, lastCheckAt: new Date(), failCount: 0 }).where(eq(maskDomains.id, id));
+  });
+  const reissued = await reissueAllTo(row.domain);
+  return { domain: row.domain, reissued };
 }
-
-export class DomainError extends Error {}
 
 /** DNS + real TLS 1.3 handshake with this SNI (FakeTLS mimics TLS 1.3). */
 export async function checkDomain(domain: string): Promise<{ ok: boolean; error?: string }> {
@@ -112,33 +107,21 @@ export async function checkDomain(domain: string): Promise<{ ok: boolean; error?
   });
 }
 
-/** Check one stored domain, record the result, auto-disable after repeated failures. */
-export async function checkStoredDomain(id: string): Promise<{ ok: boolean; error?: string; disabled: boolean }> {
+/** Check one stored domain and record the result. Never switches anything by itself. */
+export async function checkStoredDomain(id: string): Promise<{ ok: boolean; error?: string }> {
   const db = getDb();
   const row = (await db.select().from(maskDomains).where(eq(maskDomains.id, id)).limit(1))[0];
   if (!row) throw new DomainError("Домен не найден");
   const r = await checkDomain(row.domain);
-  const failCount = r.ok ? 0 : row.failCount + 1;
   await db
     .update(maskDomains)
-    .set({ lastOk: r.ok, lastError: r.ok ? null : (r.error ?? "ошибка"), lastCheckAt: new Date(), failCount })
+    .set({ lastOk: r.ok, lastError: r.ok ? null : (r.error ?? "ошибка"), lastCheckAt: new Date(), failCount: r.ok ? 0 : row.failCount + 1 })
     .where(eq(maskDomains.id, id));
-
-  let disabled = false;
-  if (!r.ok && row.status === "active") {
-    const others = (await candidates()).filter((c) => c.domain !== row.domain && c.status === "active" && c.lastOk !== false);
-    if (shouldDisable(failCount, others.length)) {
-      await setDomainStatus(id, "disabled");
-      disabled = true;
-      console.warn(`[domains] ${row.domain} disabled after ${failCount} failed checks`);
-    }
-  }
-  return { ...r, disabled };
+  return r;
 }
 
 export async function checkAllDomains(): Promise<void> {
-  const db = getDb();
-  const rows = await db.select({ id: maskDomains.id }).from(maskDomains).where(eq(maskDomains.status, "active"));
+  const rows = await getDb().select({ id: maskDomains.id }).from(maskDomains);
   for (const r of rows) {
     try {
       await checkStoredDomain(r.id);
@@ -148,25 +131,25 @@ export async function checkAllDomains(): Promise<void> {
   }
 }
 
-/** Give every user pinned to `domain` a new link with another domain (same key). */
-async function reissueUsersOf(domain: string): Promise<void> {
+/** Rebuild every issued link that is not on `domain` (same key) and DM active users. */
+async function reissueAllTo(domain: string): Promise<number> {
   const db = getDb();
   const rows = await db
     .select({ userId: subscriptions.userId, link: subscriptions.link, end: subscriptions.currentPeriodEnd, tg: users.telegramUserId })
     .from(subscriptions)
     .innerJoin(users, eq(users.id, subscriptions.userId))
-    .where(and(eq(subscriptions.sniDomain, domain), isNotNull(subscriptions.link)));
+    .where(and(isNotNull(subscriptions.link), or(isNull(subscriptions.sniDomain), ne(subscriptions.sniDomain, domain))));
 
+  let n = 0;
   for (const r of rows) {
     const key = /[?&]secret=ee([0-9a-fA-F]{32})/.exec(r.link ?? "")?.[1];
     if (!key) continue;
-    const sni = await resolveSniFor(null);
-    if (sni === domain) continue;
-    const link = buildProxyLink({ host: env.proxyServerHost(), port: env.proxyServerPort(), key, sni });
+    const link = buildProxyLink({ host: env.proxyServerHost(), port: env.proxyServerPort(), key, sni: domain });
     await db
       .update(subscriptions)
-      .set({ link: link.tg, secretFingerprint: link.fingerprint, sniDomain: sni, updatedAt: sql`now()` })
+      .set({ link: link.tg, secretFingerprint: link.fingerprint, sniDomain: domain, updatedAt: sql`now()` })
       .where(eq(subscriptions.userId, r.userId));
+    n++;
     if (computeAccess(r.end ?? null).status === "active") {
       try {
         await sendTelegramMessage(r.tg, "🔄 Мы обновили вашу ссылку подключения. Нажмите кнопку ниже, чтобы подключиться заново.", {
@@ -177,6 +160,7 @@ async function reissueUsersOf(domain: string): Promise<void> {
       }
     }
   }
+  return n;
 }
 
 /** Start the periodic check once per process (long-lived node server on the VPS). */

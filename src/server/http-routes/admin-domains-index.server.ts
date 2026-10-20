@@ -13,7 +13,7 @@ export const handlers = {
   GET: async ({ request }: { request: Request }) => {
     try {
       await requireAdmin(request, "viewer");
-      return json({ domains: await listDomains(), defaultDomain: process.env["PROXY_SNI"] ?? "docs.rs" });
+      return json(await listDomains());
     } catch (e) {
       return fail(e);
     }

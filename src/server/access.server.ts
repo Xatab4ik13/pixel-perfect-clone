@@ -9,7 +9,7 @@ import { buildProxyLink } from "./link";
 import { tryNotifyAccessGranted } from "./telegram-notify.server";
 import { claimReferralReward } from "./referrals.server";
 import { env } from "./env.server";
-import { resolveSniFor } from "./domains.server";
+import { currentPrimaryDomain } from "./domains.server";
 import { getPlan, type Plan } from "@/lib/plans";
 import { extendPeriod, computeAccess, type AccessStatus } from "@/lib/subscription";
 
@@ -155,7 +155,7 @@ export async function activateAccess(
     sub.telemtUsername,
     keyFromLink(sub.link),
   );
-  const sni = await resolveSniFor(sub.sniDomain);
+  const sni = await currentPrimaryDomain();
   const link = buildProxyLink({
     host: env.proxyServerHost(),
     port: env.proxyServerPort(),
@@ -238,7 +238,7 @@ export async function applyPaidPayment(paymentId: string): Promise<Subscription>
       keyFromLink(sub.link),
     );
 
-    const sni = await resolveSniFor(sub.sniDomain);
+    const sni = await currentPrimaryDomain();
     const link = buildProxyLink({
       host: env.proxyServerHost(),
       port: env.proxyServerPort(),
@@ -324,7 +324,7 @@ export async function rotateUserSecret(userId: string): Promise<void> {
     if (!resolved) throw new TelemtError(`rotate-secret returned no secret for ${username}`);
     secret = resolved;
   }
-  const sni = await resolveSniFor(sub.sniDomain);
+  const sni = await currentPrimaryDomain();
   const link = buildProxyLink({
     host: env.proxyServerHost(),
     port: env.proxyServerPort(),
