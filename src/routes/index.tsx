@@ -10,6 +10,7 @@ import giftIcon from "@/assets/icon-gift.png";
 import { HomeBenefits } from "@/components/HomeBenefits";
 import { PaymentSheet } from "@/components/PaymentSheet";
 import { DEMO_PLANS, type DemoPlan } from "@/lib/demo-access";
+import { SbpMark } from "@/components/SbpMark";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,7 +34,7 @@ function Index() {
       <Logo />
       <AccessStatus />
       <Button asChild className="mt-4 h-14 rounded-2xl bg-gradient-primary text-base font-bold shadow-button">
-        <Link to="/access">{days ? "Продлить доступ" : "Оплатить доступ"}<ArrowRight /></Link>
+        <Link to="/access"><SbpMark />{days ? "Продлить доступ" : "Оплатить доступ"}<ArrowRight /></Link>
       </Button>
 
       <section className="mt-5" aria-label="Тарифы">

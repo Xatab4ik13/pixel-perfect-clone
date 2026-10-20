@@ -5,6 +5,7 @@ import { Sheet, SheetContent, SheetTitle, SheetDescription } from '@/components/
 import { Button } from '@/components/ui/button';
 import { useDemo } from '@/components/DemoProvider';
 import type { DemoPlan } from '@/lib/demo-access';
+import { SbpMark } from '@/components/SbpMark';
 
 const WINDOW_SECONDS = 20 * 60; // 20 минут на оплату
 
@@ -163,6 +164,7 @@ export function PaymentSheet({ plan, onClose }: { plan: DemoPlan | null; onClose
             ) : (
               <>
                 <Button onClick={openExternal} className="h-14 w-full rounded-2xl bg-gradient-primary text-base font-bold shadow-button">
+                  <SbpMark />
                   <ArrowUpRight />Перейти к оплате
                 </Button>
                 <Button variant="secondary" onClick={copyLink} className="mt-3 h-12 w-full rounded-2xl">

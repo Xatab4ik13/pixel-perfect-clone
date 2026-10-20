@@ -11,3 +11,4 @@
 - [x] Replace referral login with personal Telegram demo link and two counters.
 - [x] Add personal account and make connection instructions more cohesive.
 - [x] Verify mock payment, account, referral and connection flows.- [x] Desktop admin panel (frontend-only, empty states, confirm+reason).
+- [ ] SBP mark: keep it only on the large payment buttons (remove from tariff cards) and align it evenly with the button text.
