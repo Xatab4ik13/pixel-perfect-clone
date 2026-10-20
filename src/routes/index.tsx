@@ -54,10 +54,11 @@ function Index() {
               aria-label={`Оплатить ${plan.name} за ${plan.price} ₽`}
               className={`relative h-auto min-w-0 flex-col gap-1 whitespace-normal rounded-2xl border px-2 pb-4 pt-5 shadow-soft ${plan.id === "quarter" ? "border-primary/40 bg-gradient-primary text-primary-foreground" : "border-card bg-card"}`}
             >
+              {plan.id === "quarter" && <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-card px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-primary shadow-soft">Хит</span>}
               <span className="text-xs font-semibold">{plan.name}</span>
               <strong className="mt-1 text-lg font-extrabold">{plan.price.toLocaleString("ru-RU")} ₽</strong>
-              <span className={`text-[10px] font-normal ${plan.id === "quarter" ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-                {plan.id === "quarter" ? "Выгодный выбор" : plan.id === "year" ? "На целый год" : "Попробовать"}
+              <span className={`text-[10px] font-normal ${plan.id === "quarter" ? "font-semibold text-primary-foreground/90" : plan.id === "year" ? "font-semibold text-success" : "text-muted-foreground"}`}>
+                {plan.id === "quarter" ? "283 ₽/мес · −19%" : plan.id === "year" ? "208 ₽/мес · −40%" : "Попробовать"}
               </span>
             </Button>
           ))}

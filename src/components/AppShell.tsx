@@ -22,8 +22,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   ] as const;
   return (
     <div className="min-h-screen bg-gradient-sky">
-      <div className="mx-auto flex min-h-screen max-w-md flex-col px-5 pb-28 pt-6">{children}</div>
-      <nav className="fixed inset-x-0 bottom-0 border-t border-border bg-card/95 backdrop-blur">
+      <div className="mx-auto stagger flex min-h-screen max-w-md flex-col px-5 pb-28 pt-6">{children}</div>
+      <nav className="fixed inset-x-0 bottom-0 glass-nav border-t border-border/60">
         <div className="mx-auto grid max-w-md grid-cols-4">
           {tabs.map(({ to, label, icon }) => (
             <Link
@@ -56,7 +56,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 export function Logo({ small }: { small?: boolean }) {
   return (
     <div className="flex flex-col items-center text-center">
-      <img src={plane} alt="" width={256} height={256} className={small ? "h-16 w-16" : "h-24 w-24"} />
+      <span className="logo-glow isolate"><img src={plane} alt="" width={256} height={256} className={small ? "h-16 w-16" : "h-24 w-24"} /></span>
       <h1 className={`${small ? "text-3xl" : "text-[2.6rem] leading-none"} mt-2 font-extrabold tracking-tight`}>Лазейка</h1>
       <p className="mt-2 text-sm text-muted-foreground">Стабильное соединение без лишних сложностей</p>
     </div>
