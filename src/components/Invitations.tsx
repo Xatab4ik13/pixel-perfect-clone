@@ -3,7 +3,7 @@ import { Copy, Send, Check } from 'lucide-react';
 import { IconImg } from '@/components/AppShell';
 import { Button } from '@/components/ui/button';
 import { useDemo } from '@/components/DemoProvider';
-import gift from '@/assets/icon-gift.png';
+import gift from '@/assets/icon-gift.webp';
 
 interface TgWebApp {
   openTelegramLink?: (url: string) => void;

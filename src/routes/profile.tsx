@@ -5,7 +5,7 @@ import { AppShell, IconImg, Logo } from '@/components/AppShell';
 import { AccessStatus } from '@/components/AccessStatus';
 import { useDemo } from '@/components/DemoProvider';
 import { Button } from '@/components/ui/button';
-import profileIcon from '@/assets/icon-profile.png';
+import profileIcon from '@/assets/icon-profile.webp';
 import { DEMO_PLANS } from '@/lib/demo-access';
 
 export const Route = createFileRoute('/profile')({

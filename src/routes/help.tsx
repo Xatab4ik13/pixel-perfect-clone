@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronDown, Search, Send } from "lucide-react";
 import { AppShell, IconImg, Logo } from "@/components/AppShell";
-import headset from "@/assets/icon-headset.png";
+import headset from "@/assets/icon-headset.webp";
 
 export const Route = createFileRoute("/help")({
   head: () => ({

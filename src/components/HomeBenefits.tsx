@@ -1,8 +1,8 @@
 import { IconImg } from '@/components/AppShell';
-import shield from '@/assets/benefit-shield.png';
-import backdrop from '@/assets/benefits-backdrop.jpg';
-import plane from '@/assets/icon-key.png';
-import bolt from '@/assets/icon-bolt.png';
+import shield from '@/assets/benefit-shield.webp';
+import backdrop from '@/assets/benefits-backdrop.webp';
+import plane from '@/assets/icon-key.webp';
+import bolt from '@/assets/icon-bolt.webp';
 
 export function HomeBenefits() {
   return <section aria-label="Преимущества Лазейки" className="relative -mx-5 mt-9 isolate overflow-hidden px-5 pb-8 pt-7">
