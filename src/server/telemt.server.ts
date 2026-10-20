@@ -128,4 +128,13 @@ export const telemt = {
   activeIps(): Promise<unknown> {
     return call<unknown>("GET", "/v1/stats/users/active-ips");
   },
+  /** Replace censorship.tls_domains (extra FakeTLS domains). tls_domains is not hot-reloadable. */
+  async setTlsDomains(domains: string[]): Promise<{ restartRequired: boolean }> {
+    const r = await call<{ process_restart_required?: boolean; restart_required?: boolean } | undefined>(
+      "PATCH",
+      "/v1/config?reload=instant",
+      { censorship: { tls_domains: domains } },
+    );
+    return { restartRequired: Boolean(r?.process_restart_required ?? r?.restart_required ?? true) };
+  },
 };
