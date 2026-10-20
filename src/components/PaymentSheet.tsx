@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useDemo } from '@/components/DemoProvider';
 import type { DemoPlan } from '@/lib/demo-access';
 import { SbpMark } from '@/components/SbpMark';
+import sbpIcon from '@/assets/icon-sbp.svg';
 
 const WINDOW_SECONDS = 20 * 60; // 20 минут на оплату
 
@@ -114,10 +115,18 @@ export function PaymentSheet({ plan, onClose }: { plan: DemoPlan | null; onClose
     <Sheet open={Boolean(plan)} onOpenChange={(open) => { if (!open) onClose(); }}>
       <SheetContent side="bottom" className="mx-auto max-h-[94dvh] max-w-md overflow-y-auto rounded-t-3xl bg-card px-5 pb-7 pt-3">
         <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-border" />
-        <SheetTitle className="text-left text-2xl font-extrabold">Оплата</SheetTitle>
-        <SheetDescription className="mt-1 text-left">
-          {plan?.name} · {plan?.price.toLocaleString('ru-RU')} ₽ · СБП
-        </SheetDescription>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <SheetTitle className="text-left text-2xl font-extrabold">Оплата</SheetTitle>
+            <SheetDescription className="mt-1 text-left">
+              {plan?.name} · {plan?.price.toLocaleString('ru-RU')} ₽
+            </SheetDescription>
+          </div>
+          <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3 py-2">
+            <SbpMark className="h-7" />
+            <span className="text-left text-[10px] font-bold leading-tight text-muted-foreground">Система<br />быстрых платежей</span>
+          </div>
+        </div>
 
         {stage === 'creating' && (
           <div className="my-12 flex flex-col items-center gap-3 text-muted-foreground">
@@ -152,7 +161,7 @@ export function PaymentSheet({ plan, onClose }: { plan: DemoPlan | null; onClose
 
             <div className="my-5 flex justify-center">
               <div className={`rounded-2xl bg-white p-4 shadow-soft ${expired ? 'opacity-40' : ''}`}>
-                <QRCodeSVG value={url} size={200} level="M" />
+                <QRCodeSVG value={url} size={200} level="H" imageSettings={{ src: sbpIcon, height: 40, width: 32, excavate: true }} />
               </div>
             </div>
             <p className="mb-5 text-center text-xs text-muted-foreground">
@@ -165,7 +174,7 @@ export function PaymentSheet({ plan, onClose }: { plan: DemoPlan | null; onClose
               <>
                 <Button onClick={openExternal} className="h-14 w-full rounded-2xl bg-gradient-primary text-base font-bold shadow-button">
                   <SbpMark />
-                  <ArrowUpRight />Перейти к оплате
+                  Перейти к оплате<ArrowUpRight />
                 </Button>
                 <Button variant="secondary" onClick={copyLink} className="mt-3 h-12 w-full rounded-2xl">
                   {copied ? <><Check />Скопировано</> : <><Copy />Скопировать ссылку</>}

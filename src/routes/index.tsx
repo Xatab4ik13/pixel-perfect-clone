@@ -33,8 +33,11 @@ function Index() {
     <AppShell>
       <Logo />
       <AccessStatus />
-      <Button asChild className="mt-4 h-14 rounded-2xl bg-gradient-primary text-base font-bold shadow-button">
-        <Link to="/access"><SbpMark />{days ? "Продлить доступ" : "Оплатить доступ"}<ArrowRight /></Link>
+      <Button
+        className="mt-4 h-14 w-full rounded-2xl bg-gradient-primary text-base font-bold shadow-button"
+        onClick={() => setPayment(DEMO_PLANS.find((p) => p.id === "quarter") ?? DEMO_PLANS[0])}
+      >
+        <SbpMark />{days ? "Продлить доступ" : "Оплатить доступ"}<ArrowRight />
       </Button>
 
       <section className="mt-5" aria-label="Тарифы">
