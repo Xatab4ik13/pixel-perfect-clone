@@ -88,6 +88,8 @@ export const subscriptions = pgTable(
     // The issued tg://proxy link (secret-bearing). Owner-only.
     link: text("link"),
     secretFingerprint: text("secret_fingerprint"),
+    // Mask (SNI) domain baked into this user's link; null = default PROXY_SNI.
+    sniDomain: text("sni_domain"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
