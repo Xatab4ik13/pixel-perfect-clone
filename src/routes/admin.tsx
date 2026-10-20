@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { AdminConfirm, type PendingAction } from "@/components/admin/AdminConfirm";
 
 export const Route = createFileRoute("/admin")({
@@ -324,7 +324,7 @@ function BroadcastSection({
     return () => clearInterval(t);
   }, [job, load]);
 
-  const previews = photos.map((f) => URL.createObjectURL(f));
+  const previews = useMemo(() => photos.map((f) => URL.createObjectURL(f)), [photos]);
   useEffect(() => () => previews.forEach((u) => URL.revokeObjectURL(u)), [previews]);
 
   const send = () => {
