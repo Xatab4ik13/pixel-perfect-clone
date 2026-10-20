@@ -174,10 +174,9 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       };
       return res.confirmationUrl ?? null;
     }
-    // Browser preview demo.
-    setDays((value) => applyDemoPayment(value, plan));
-    setPayments((value) => [{ name: plan.name, price: plan.price, days: plan.days, paidAt: new Date().toISOString() }, ...value]);
-    return null;
+    // Browser preview demo: show the payment sheet with a sample link, nothing is charged.
+    void applyDemoPayment;
+    return `https://qr.nspk.ru/demo-${plan.id}`;
   };
 
   return (
