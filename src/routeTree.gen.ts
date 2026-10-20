@@ -30,6 +30,8 @@ import { Route as ApiMeReferralsRouteImport } from './routes/api/me/referrals'
 import { Route as ApiPayIndexRouteImport } from './routes/api/pay/index'
 import { Route as ApiPayWebhookRouteImport } from './routes/api/pay/webhook'
 import { Route as ApiTgWebhookRouteImport } from './routes/api/tg/webhook'
+import { Route as ApiAdminDomainsIndexRouteImport } from './routes/api/admin/domains/index'
+import { Route as ApiAdminDomainsIdRouteImport } from './routes/api/admin/domains/$id'
 import { Route as ApiAdminUsersIndexRouteImport } from './routes/api/admin/users/index'
 import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users/$id'
 
@@ -138,6 +140,16 @@ const ApiTgWebhookRoute = ApiTgWebhookRouteImport.update({
   path: '/api/tg/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminDomainsIndexRoute = ApiAdminDomainsIndexRouteImport.update({
+  id: '/api/admin/domains/',
+  path: '/api/admin/domains/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminDomainsIdRoute = ApiAdminDomainsIdRouteImport.update({
+  id: '/api/admin/domains/$id',
+  path: '/api/admin/domains/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminUsersIndexRoute = ApiAdminUsersIndexRouteImport.update({
   id: '/api/admin/users/',
   path: '/api/admin/users/',
@@ -171,7 +183,9 @@ export interface FileRoutesByFullPath {
   '/api/tg/webhook': typeof ApiTgWebhookRoute
   '/api/me/': typeof ApiMeIndexRoute
   '/api/pay/': typeof ApiPayIndexRoute
+  '/api/admin/domains/$id': typeof ApiAdminDomainsIdRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
+  '/api/admin/domains/': typeof ApiAdminDomainsIndexRoute
   '/api/admin/users/': typeof ApiAdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -196,7 +210,9 @@ export interface FileRoutesByTo {
   '/api/tg/webhook': typeof ApiTgWebhookRoute
   '/api/me': typeof ApiMeIndexRoute
   '/api/pay': typeof ApiPayIndexRoute
+  '/api/admin/domains/$id': typeof ApiAdminDomainsIdRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
+  '/api/admin/domains': typeof ApiAdminDomainsIndexRoute
   '/api/admin/users': typeof ApiAdminUsersIndexRoute
 }
 export interface FileRoutesById {
@@ -222,7 +238,9 @@ export interface FileRoutesById {
   '/api/tg/webhook': typeof ApiTgWebhookRoute
   '/api/me/': typeof ApiMeIndexRoute
   '/api/pay/': typeof ApiPayIndexRoute
+  '/api/admin/domains/$id': typeof ApiAdminDomainsIdRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
+  '/api/admin/domains/': typeof ApiAdminDomainsIndexRoute
   '/api/admin/users/': typeof ApiAdminUsersIndexRoute
 }
 export interface FileRouteTypes {
@@ -249,7 +267,9 @@ export interface FileRouteTypes {
     | '/api/tg/webhook'
     | '/api/me/'
     | '/api/pay/'
+    | '/api/admin/domains/$id'
     | '/api/admin/users/$id'
+    | '/api/admin/domains/'
     | '/api/admin/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -274,7 +294,9 @@ export interface FileRouteTypes {
     | '/api/tg/webhook'
     | '/api/me'
     | '/api/pay'
+    | '/api/admin/domains/$id'
     | '/api/admin/users/$id'
+    | '/api/admin/domains'
     | '/api/admin/users'
   id:
     | '__root__'
@@ -299,7 +321,9 @@ export interface FileRouteTypes {
     | '/api/tg/webhook'
     | '/api/me/'
     | '/api/pay/'
+    | '/api/admin/domains/$id'
     | '/api/admin/users/$id'
+    | '/api/admin/domains/'
     | '/api/admin/users/'
   fileRoutesById: FileRoutesById
 }
@@ -325,7 +349,9 @@ export interface RootRouteChildren {
   ApiTgWebhookRoute: typeof ApiTgWebhookRoute
   ApiMeIndexRoute: typeof ApiMeIndexRoute
   ApiPayIndexRoute: typeof ApiPayIndexRoute
+  ApiAdminDomainsIdRoute: typeof ApiAdminDomainsIdRoute
   ApiAdminUsersIdRoute: typeof ApiAdminUsersIdRoute
+  ApiAdminDomainsIndexRoute: typeof ApiAdminDomainsIndexRoute
   ApiAdminUsersIndexRoute: typeof ApiAdminUsersIndexRoute
 }
 
@@ -478,6 +504,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTgWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/domains/': {
+      id: '/api/admin/domains/'
+      path: '/api/admin/domains'
+      fullPath: '/api/admin/domains/'
+      preLoaderRoute: typeof ApiAdminDomainsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/domains/$id': {
+      id: '/api/admin/domains/$id'
+      path: '/api/admin/domains/$id'
+      fullPath: '/api/admin/domains/$id'
+      preLoaderRoute: typeof ApiAdminDomainsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/users/': {
       id: '/api/admin/users/'
       path: '/api/admin/users'
@@ -517,7 +557,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTgWebhookRoute: ApiTgWebhookRoute,
   ApiMeIndexRoute: ApiMeIndexRoute,
   ApiPayIndexRoute: ApiPayIndexRoute,
+  ApiAdminDomainsIdRoute: ApiAdminDomainsIdRoute,
   ApiAdminUsersIdRoute: ApiAdminUsersIdRoute,
+  ApiAdminDomainsIndexRoute: ApiAdminDomainsIndexRoute,
   ApiAdminUsersIndexRoute: ApiAdminUsersIndexRoute,
 }
 export const routeTree = rootRouteImport
