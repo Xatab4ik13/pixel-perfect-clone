@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import plane from "@/assets/icon-key.png";
-import tabHome from "@/assets/icon-home.png";
-import tabCalendar from "@/assets/icon-tab-calendar.png";
-import tabHelp from "@/assets/icon-tab-help.png";
-import tabProfile from "@/assets/icon-profile.png";
+import plane from "@/assets/icon-key.webp";
+import tabHome from "@/assets/icon-home.webp";
+import tabCalendar from "@/assets/icon-tab-calendar.webp";
+import tabHelp from "@/assets/icon-tab-help.webp";
+import tabProfile from "@/assets/icon-profile.webp";
 import { useDemo } from "@/components/DemoProvider";
 import { TelegramGate } from "@/components/TelegramGate";
 import { canShowApp } from "@/lib/app-visibility";

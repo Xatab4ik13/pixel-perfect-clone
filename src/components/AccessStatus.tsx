@@ -2,8 +2,8 @@ import { useDemo } from '@/components/DemoProvider';
 import { IconImg } from '@/components/AppShell';
 import { Button } from '@/components/ui/button';
 import { ArrowUpRight } from 'lucide-react';
-import shield from '@/assets/icon-shield.jpg';
-import calendar from '@/assets/icon-calendar.png';
+import shield from '@/assets/icon-shield.webp';
+import calendar from '@/assets/icon-calendar.webp';
 
 export function AccessStatus({ ring = false }: { ring?: boolean }) {
   const { days, link } = useDemo();
