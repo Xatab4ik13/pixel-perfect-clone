@@ -199,6 +199,11 @@ export async function applyPaidPayment(paymentId: string): Promise<Subscription>
     if (!payment) throw new Error(`payment not found: ${paymentId}`);
     payerUserId = payment.userId;
 
+    // Never lose a paid payment because the subscription row is missing: create it.
+    await tx
+      .insert(subscriptions)
+      .values({ userId: payment.userId, status: "pending" })
+      .onConflictDoNothing();
     const subRows = await tx
       .select()
       .from(subscriptions)

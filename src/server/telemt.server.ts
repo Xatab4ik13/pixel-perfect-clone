@@ -65,15 +65,24 @@ function toWire(input: CreateUserInput | PatchUserInput): Record<string, unknown
   return body;
 }
 
+export const TELEMT_TIMEOUT_MS = 8000;
+
 async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
   const base = env.telemtApiUrl().replace(/\/+$/, "");
   const token = env.telemtApiToken();
   const headers: Record<string, string> = { "content-type": "application/json" };
   if (token) headers["authorization"] = `Bearer ${token}`;
 
-  const init: RequestInit = { method, headers };
+  // Bounded wait: a hung telemt node must not hold DB locks/connections indefinitely.
+  const init: RequestInit = { method, headers, signal: AbortSignal.timeout(TELEMT_TIMEOUT_MS) };
   if (body !== undefined) init.body = JSON.stringify(body);
-  const res = await fetch(`${base}${path}`, init);
+  let res: Response;
+  try {
+    res = await fetch(`${base}${path}`, init);
+  } catch (e) {
+    const timedOut = e instanceof Error && (e.name === "TimeoutError" || e.name === "AbortError");
+    throw new TelemtError(timedOut ? `telemt ${method} ${path} timed out after ${TELEMT_TIMEOUT_MS}ms` : `telemt ${method} ${path} failed: ${e instanceof Error ? e.message : String(e)}`);
+  }
 
   if (!res.ok) {
     let detail = "";
