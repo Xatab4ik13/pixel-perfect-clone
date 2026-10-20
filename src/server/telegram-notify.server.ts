@@ -59,3 +59,16 @@ export async function tryNotifyAccessGranted(
     console.error("[notify] failed for", telegramUserId, e instanceof Error ? e.message : e);
   }
 }
+
+/** Best-effort DM to the referrer when an invited friend paid. */
+export async function tryNotifyReferralReward(telegramUserId: number, days: number, periodEnd: Date): Promise<void> {
+  try {
+    const until = periodEnd.toLocaleDateString("ru-RU", { timeZone: "Europe/Moscow", day: "2-digit", month: "2-digit", year: "numeric" });
+    await sendTelegramMessage(
+      telegramUserId,
+      `🎁 Ваш друг оформил доступ — вам начислено <b>+${days} дн.</b>\nДоступ активен до <b>${until}</b>.`,
+    );
+  } catch (e) {
+    console.error("[notify] referral failed for", telegramUserId, e instanceof Error ? e.message : e);
+  }
+}

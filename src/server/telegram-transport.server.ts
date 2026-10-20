@@ -36,11 +36,21 @@ function relayAgent(relay: string): https.Agent {
 }
 
 export function tgCall(method: string, body: Record<string, unknown>): Promise<TgResult> {
+  return tgSend(method, "application/json", Buffer.from(JSON.stringify(body)), 9000);
+}
+
+/** Multipart upload (e.g. sendMediaGroup with attached photos). Body comes from a Web FormData. */
+export async function tgCallForm(method: string, form: FormData): Promise<TgResult> {
+  const r = new Response(form);
+  const buf = Buffer.from(await r.arrayBuffer());
+  return tgSend(method, r.headers.get("content-type") ?? "multipart/form-data", buf, 60000);
+}
+
+function tgSend(method: string, contentType: string, payload: Buffer, timeoutMs: number): Promise<TgResult> {
   if (!env.botEgressEnabled()) {
     return Promise.reject(new Error("telegram egress disabled (BOT_EGRESS=0)"));
   }
   const token = env.telegramBotToken();
-  const payload = JSON.stringify(body);
   const relay = env.botApiRelay();
 
   const options: https.RequestOptions = {
@@ -50,10 +60,10 @@ export function tgCall(method: string, body: Record<string, unknown>): Promise<T
     method: "POST",
     path: `/bot${token}/${method}`,
     headers: {
-      "content-type": "application/json",
-      "content-length": Buffer.byteLength(payload),
+      "content-type": contentType,
+      "content-length": payload.length,
     },
-    timeout: 9000,
+    timeout: timeoutMs,
   };
   if (relay) options.agent = relayAgent(relay);
 

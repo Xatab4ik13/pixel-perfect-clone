@@ -19,6 +19,7 @@ import { Route as ApiConfigRouteImport } from './routes/api/config'
 import { Route as ApiPlansRouteImport } from './routes/api/plans'
 import { Route as ApiAdminBootstrapRouteImport } from './routes/api/admin/bootstrap'
 import { Route as ApiAdminBotRouteImport } from './routes/api/admin/bot'
+import { Route as ApiAdminBroadcastRouteImport } from './routes/api/admin/broadcast'
 import { Route as ApiAdminLoginRouteImport } from './routes/api/admin/login'
 import { Route as ApiAdminLogoutRouteImport } from './routes/api/admin/logout'
 import { Route as ApiAdminMeRouteImport } from './routes/api/admin/me'
@@ -83,6 +84,11 @@ const ApiAdminBootstrapRoute = ApiAdminBootstrapRouteImport.update({
 const ApiAdminBotRoute = ApiAdminBotRouteImport.update({
   id: '/api/admin/bot',
   path: '/api/admin/bot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminBroadcastRoute = ApiAdminBroadcastRouteImport.update({
+  id: '/api/admin/broadcast',
+  path: '/api/admin/broadcast',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAdminLoginRoute = ApiAdminLoginRouteImport.update({
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/api/plans': typeof ApiPlansRoute
   '/api/admin/bootstrap': typeof ApiAdminBootstrapRoute
   '/api/admin/bot': typeof ApiAdminBotRoute
+  '/api/admin/broadcast': typeof ApiAdminBroadcastRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/api/plans': typeof ApiPlansRoute
   '/api/admin/bootstrap': typeof ApiAdminBootstrapRoute
   '/api/admin/bot': typeof ApiAdminBotRoute
+  '/api/admin/broadcast': typeof ApiAdminBroadcastRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/api/plans': typeof ApiPlansRoute
   '/api/admin/bootstrap': typeof ApiAdminBootstrapRoute
   '/api/admin/bot': typeof ApiAdminBotRoute
+  '/api/admin/broadcast': typeof ApiAdminBroadcastRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
@@ -256,6 +265,7 @@ export interface FileRouteTypes {
     | '/api/plans'
     | '/api/admin/bootstrap'
     | '/api/admin/bot'
+    | '/api/admin/broadcast'
     | '/api/admin/login'
     | '/api/admin/logout'
     | '/api/admin/me'
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/api/plans'
     | '/api/admin/bootstrap'
     | '/api/admin/bot'
+    | '/api/admin/broadcast'
     | '/api/admin/login'
     | '/api/admin/logout'
     | '/api/admin/me'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/api/plans'
     | '/api/admin/bootstrap'
     | '/api/admin/bot'
+    | '/api/admin/broadcast'
     | '/api/admin/login'
     | '/api/admin/logout'
     | '/api/admin/me'
@@ -338,6 +350,7 @@ export interface RootRouteChildren {
   ApiPlansRoute: typeof ApiPlansRoute
   ApiAdminBootstrapRoute: typeof ApiAdminBootstrapRoute
   ApiAdminBotRoute: typeof ApiAdminBotRoute
+  ApiAdminBroadcastRoute: typeof ApiAdminBroadcastRoute
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
   ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
   ApiAdminMeRoute: typeof ApiAdminMeRoute
@@ -425,6 +438,13 @@ declare module '@tanstack/react-router' {
       path: '/api/admin/bot'
       fullPath: '/api/admin/bot'
       preLoaderRoute: typeof ApiAdminBotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/broadcast': {
+      id: '/api/admin/broadcast'
+      path: '/api/admin/broadcast'
+      fullPath: '/api/admin/broadcast'
+      preLoaderRoute: typeof ApiAdminBroadcastRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/admin/login': {
@@ -546,6 +566,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPlansRoute: ApiPlansRoute,
   ApiAdminBootstrapRoute: ApiAdminBootstrapRoute,
   ApiAdminBotRoute: ApiAdminBotRoute,
+  ApiAdminBroadcastRoute: ApiAdminBroadcastRoute,
   ApiAdminLoginRoute: ApiAdminLoginRoute,
   ApiAdminLogoutRoute: ApiAdminLogoutRoute,
   ApiAdminMeRoute: ApiAdminMeRoute,

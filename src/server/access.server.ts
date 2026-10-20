@@ -6,7 +6,7 @@ import { getDb } from "./db.server";
 import { users, subscriptions, payments, type Subscription } from "./schema";
 import { telemt, TelemtError, type TelemtUserView } from "./telemt.server";
 import { buildProxyLink } from "./link";
-import { tryNotifyAccessGranted } from "./telegram-notify.server";
+import { tryNotifyAccessGranted, tryNotifyReferralReward } from "./telegram-notify.server";
 import { claimReferralReward } from "./referrals.server";
 import { env } from "./env.server";
 import { currentPrimaryDomain } from "./domains.server";
@@ -138,7 +138,7 @@ async function provisionTelemt(
 export async function activateAccess(
   userId: string,
   days: number,
-  opts: { maxUniqueIps?: number; planId?: string } = {},
+  opts: { maxUniqueIps?: number; planId?: string; notify?: "granted" | "referral" } = {},
 ): Promise<Subscription> {
   const db = getDb();
   const sub = await getOrCreateSubscription(userId);
@@ -179,7 +179,8 @@ export async function activateAccess(
     .returning();
 
   const planName = getPlan(opts.planId ?? sub.planId ?? "")?.name ?? null;
-  await tryNotifyAccessGranted(telegramUserId, link.tme, periodEnd, planName);
+  if (opts.notify === "referral") await tryNotifyReferralReward(telegramUserId, days, periodEnd);
+  else await tryNotifyAccessGranted(telegramUserId, link.tme, periodEnd, planName);
   return updated[0]!;
 }
 
@@ -285,7 +286,7 @@ export async function applyPaidPayment(paymentId: string): Promise<Subscription>
       const claim = await claimReferralReward(payerUserId);
       if (claim) {
         // Keep the referrer's existing plan label; just extend their access.
-        await activateAccess(claim.referrerUserId, claim.days);
+        await activateAccess(claim.referrerUserId, claim.days, { notify: "referral" });
       }
     } catch (e) {
       console.error("[referral] reward failed", e instanceof Error ? e.message : e);

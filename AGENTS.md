@@ -18,3 +18,4 @@
 - Keep archived database migrations under vps/drizzle and target only DATABASE_URL in Drizzle configuration; never apply imported VPS migrations to the managed Cloud database.
 - Keep mutating user administration behind AdminConfirm and require the reason again on the server; UI confirmation is not an authorization boundary.
 - Mask (SNI) domains live in mask_domains: every link uses the single primary domain (row is_primary or PROXY_SNI) with a per-user key; reserves are only checked, and staff switch primary in admin, which reissues links. One telemt node serves all via censorship.tls_domains.
+- Periodic VPS jobs (domain checks, expiry reminders) start once from src/server.ts via background.server.ts and only run with DATABASE_URL in production; broadcasts run in-process, one at a time, uploading photos once and reusing Telegram file_ids.

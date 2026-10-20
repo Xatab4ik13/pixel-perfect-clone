@@ -90,6 +90,9 @@ export const subscriptions = pgTable(
     secretFingerprint: text("secret_fingerprint"),
     // Mask (SNI) domain baked into this user's link; null = default PROXY_SNI.
     sniDomain: text("sni_domain"),
+    // Expiry reminders: the period end each reminder was sent for.
+    reminded3dFor: timestamp("reminded_3d_for", { withTimezone: true }),
+    reminded0dFor: timestamp("reminded_0d_for", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
