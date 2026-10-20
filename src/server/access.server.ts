@@ -9,6 +9,7 @@ import { buildProxyLink } from "./link";
 import { tryNotifyAccessGranted } from "./telegram-notify.server";
 import { claimReferralReward } from "./referrals.server";
 import { env } from "./env.server";
+import { resolveSniFor } from "./domains.server";
 import { getPlan, type Plan } from "@/lib/plans";
 import { extendPeriod, computeAccess, type AccessStatus } from "@/lib/subscription";
 
@@ -154,11 +155,12 @@ export async function activateAccess(
     sub.telemtUsername,
     keyFromLink(sub.link),
   );
+  const sni = await resolveSniFor(sub.sniDomain);
   const link = buildProxyLink({
     host: env.proxyServerHost(),
     port: env.proxyServerPort(),
     key: secret,
-    sni: env.proxySni(),
+    sni,
   });
   const updated = await db
     .update(subscriptions)
@@ -170,6 +172,7 @@ export async function activateAccess(
       maxUniqueIps,
       link: link.tg,
       secretFingerprint: link.fingerprint,
+      sniDomain: sni,
       updatedAt: sql`now()`,
     })
     .where(eq(subscriptions.userId, userId))
@@ -235,11 +238,12 @@ export async function applyPaidPayment(paymentId: string): Promise<Subscription>
       keyFromLink(sub.link),
     );
 
+    const sni = await resolveSniFor(sub.sniDomain);
     const link = buildProxyLink({
       host: env.proxyServerHost(),
       port: env.proxyServerPort(),
       key: secret,
-      sni: env.proxySni(),
+      sni,
     });
 
     const updated = await tx
@@ -252,6 +256,7 @@ export async function applyPaidPayment(paymentId: string): Promise<Subscription>
         maxUniqueIps: plan.maxUniqueIps,
         link: link.tg,
         secretFingerprint: link.fingerprint,
+      sniDomain: sni,
         updatedAt: sql`now()`,
       })
       .where(eq(subscriptions.userId, payment.userId))
@@ -319,14 +324,15 @@ export async function rotateUserSecret(userId: string): Promise<void> {
     if (!resolved) throw new TelemtError(`rotate-secret returned no secret for ${username}`);
     secret = resolved;
   }
+  const sni = await resolveSniFor(sub.sniDomain);
   const link = buildProxyLink({
     host: env.proxyServerHost(),
     port: env.proxyServerPort(),
     key: secret,
-    sni: env.proxySni(),
+    sni,
   });
   await db
     .update(subscriptions)
-    .set({ link: link.tg, secretFingerprint: link.fingerprint, updatedAt: sql`now()` })
+    .set({ link: link.tg, secretFingerprint: link.fingerprint, sniDomain: sni, updatedAt: sql`now()` })
     .where(eq(subscriptions.userId, userId));
 }

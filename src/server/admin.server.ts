@@ -249,8 +249,9 @@ export async function listUsers(query: string, limit = 50): Promise<AdminUserRow
 export async function recordAudit(
   actorAdminId: string,
   action: string,
-  targetUserId: string,
+  targetUserId: string | null,
   reason: string,
+  extra?: Record<string, unknown>,
 ): Promise<void> {
   const db = getDb();
   await db.insert(auditEvents).values({
@@ -258,7 +259,7 @@ export async function recordAudit(
     action,
     targetUserId,
     reason,
-    meta: { actorAdminId },
+    meta: { actorAdminId, ...extra },
   });
 }
 

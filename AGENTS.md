@@ -17,3 +17,4 @@
 - Keep the target preview bootstrap and pinned framework dependencies; VPS builds select the existing Node preset through NITRO_PRESET=node-server.
 - Keep archived database migrations under vps/drizzle and target only DATABASE_URL in Drizzle configuration; never apply imported VPS migrations to the managed Cloud database.
 - Keep mutating user administration behind AdminConfirm and require the reason again on the server; UI confirmation is not an authorization boundary.
+- Mask (SNI) domains live in mask_domains and are pinned per subscription via domains.server.ts; one telemt node serves them all through censorship.tls_domains, so no per-domain servers.

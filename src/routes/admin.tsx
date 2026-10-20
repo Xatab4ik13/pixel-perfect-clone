@@ -275,11 +275,160 @@ function Dashboard({ role, onLogout }: { role: string; onLogout: () => void }) {
         </Card>
       </section>
 
+      <DomainsSection role={role} setPending={setPending} setToast={setToast} />
+
       {toast && (
         <div onClick={() => setToast(null)} className="fixed bottom-4 right-4 cursor-pointer rounded-lg bg-foreground px-4 py-2 text-sm text-background shadow-lg">{toast}</div>
       )}
       <AdminConfirm action={pending} onClose={() => setPending(null)} onLog={() => {}} />
     </div>
+  );
+}
+
+// ── Mask domains ─────────────────────────────────────────────────────────────
+interface DomainRow {
+  id: string;
+  domain: string;
+  status: string;
+  lastCheckAt: string | null;
+  lastOk: boolean | null;
+  lastError: string | null;
+  failCount: number;
+  assigned: number;
+}
+
+function DomainsSection({
+  role,
+  setPending,
+  setToast,
+}: {
+  role: string;
+  setPending: (p: PendingAction) => void;
+  setToast: (s: string | null) => void;
+}) {
+  const [rows, setRows] = useState<DomainRow[]>([]);
+  const [def, setDef] = useState<string>("");
+  const [input, setInput] = useState("");
+  const isAdmin = role === "admin";
+  const canCheck = role === "operator" || role === "admin";
+
+  const load = useCallback(async () => {
+    try {
+      const r = await api<{ domains: DomainRow[]; defaultDomain: string }>("/api/admin/domains");
+      setRows(r.domains);
+      setDef(r.defaultDomain);
+    } catch (e) {
+      setToast(e instanceof Error ? e.message : "Ошибка загрузки");
+    }
+  }, [setToast]);
+  useEffect(() => { void load(); }, [load]);
+
+  const restartNote = (r: { restartRequired?: boolean }) =>
+    r.restartRequired ? "Готово. Перезапустите telemt, чтобы он принял список доменов." : "Готово";
+
+  const add = () => {
+    const domain = input.trim();
+    if (!domain) return;
+    setPending({
+      title: `Добавить домен ${domain}`,
+      onDone: async (reason) => {
+        try {
+          const r = await api<{ restartRequired: boolean }>("/api/admin/domains", { method: "POST", body: JSON.stringify({ domain, reason }) });
+          setInput("");
+          setToast(restartNote(r));
+          await load();
+        } catch (e) {
+          setToast(e instanceof Error ? e.message : "Ошибка");
+        }
+      },
+    });
+  };
+
+  const toggle = (d: DomainRow) => {
+    const action = d.status === "active" ? "disable" : "enable";
+    setPending({
+      title: action === "disable" ? `Выключить ${d.domain} и перевыпустить ссылки (${d.assigned})` : `Включить ${d.domain}`,
+      onDone: async (reason) => {
+        try {
+          const r = await api<{ restartRequired?: boolean }>(`/api/admin/domains/${d.id}`, { method: "POST", body: JSON.stringify({ action, reason }) });
+          setToast(restartNote(r));
+          await load();
+        } catch (e) {
+          setToast(e instanceof Error ? e.message : "Ошибка");
+        }
+      },
+    });
+  };
+
+  const check = async (d: DomainRow) => {
+    try {
+      const r = await api<{ result: { ok: boolean; error?: string; disabled: boolean } }>(`/api/admin/domains/${d.id}`, { method: "POST", body: JSON.stringify({ action: "check" }) });
+      setToast(r.result.ok ? `${d.domain}: работает` : `${d.domain}: ${r.result.error ?? "ошибка"}${r.result.disabled ? " — выключен" : ""}`);
+      await load();
+    } catch (e) {
+      setToast(e instanceof Error ? e.message : "Ошибка");
+    }
+  };
+
+  return (
+    <section className="mt-6">
+      <h2 className="mb-3 text-lg font-bold">Домены маскировки</h2>
+      <Card
+        title={`По умолчанию: ${def || "—"}`}
+        right={
+          isAdmin ? (
+            <form onSubmit={(e) => { e.preventDefault(); add(); }} className="flex gap-2">
+              <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="example.com" className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm" />
+              <button className="rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground">Добавить</button>
+            </form>
+          ) : undefined
+        }
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-xs uppercase text-muted-foreground">
+                <th className="pb-2">Домен</th><th className="pb-2">Статус</th><th className="pb-2">Проверка</th>
+                <th className="pb-2">Пользователей</th><th className="pb-2">Действия</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.length === 0 && (
+                <tr><td colSpan={5} className="py-8 text-center text-muted-foreground">Нет данных</td></tr>
+              )}
+              {rows.map((d) => (
+                <tr key={d.id} className="border-t border-border align-middle">
+                  <td className="py-2 font-semibold">{d.domain}</td>
+                  <td className="py-2">
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${d.status === "active" ? "bg-primary/15 text-primary" : "bg-destructive/15 text-destructive"}`}>
+                      {d.status === "active" ? "работает" : "выключен"}
+                    </span>
+                  </td>
+                  <td className="py-2 text-xs">
+                    {d.lastCheckAt ? (
+                      <span className={d.lastOk ? "text-muted-foreground" : "text-destructive"}>
+                        {d.lastOk ? "OK" : `${d.lastError ?? "ошибка"} (${d.failCount})`} · {new Date(d.lastCheckAt).toLocaleString("ru-RU")}
+                      </span>
+                    ) : "—"}
+                  </td>
+                  <td className="py-2">{d.assigned}</td>
+                  <td className="py-2">
+                    <div className="flex flex-wrap gap-1.5">
+                      {canCheck && <MiniBtn onClick={() => void check(d)}>Проверить</MiniBtn>}
+                      {isAdmin && (
+                        <MiniBtn danger={d.status === "active"} onClick={() => toggle(d)}>
+                          {d.status === "active" ? "Выключить" : "Включить"}
+                        </MiniBtn>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </section>
   );
 }
 

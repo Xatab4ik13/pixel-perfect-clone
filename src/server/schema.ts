@@ -88,6 +88,8 @@ export const subscriptions = pgTable(
     // The issued tg://proxy link (secret-bearing). Owner-only.
     link: text("link"),
     secretFingerprint: text("secret_fingerprint"),
+    // Mask (SNI) domain baked into this user's link; null = default PROXY_SNI.
+    sniDomain: text("sni_domain"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -168,3 +170,16 @@ export type Subscription = typeof subscriptions.$inferSelect;
 export type Payment = typeof payments.$inferSelect;
 export type AuditEvent = typeof auditEvents.$inferSelect;
 export type Referral = typeof referrals.$inferSelect;
+
+/** Pool of FakeTLS mask domains served by the telemt node (censorship.tls_domains). */
+export const maskDomains = pgTable("mask_domains", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  domain: text("domain").notNull().unique(),
+  status: text("status").notNull().default("active"), // active | disabled
+  lastCheckAt: timestamp("last_check_at", { withTimezone: true }),
+  lastOk: boolean("last_ok"),
+  lastError: text("last_error"),
+  failCount: integer("fail_count").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+export type MaskDomain = typeof maskDomains.$inferSelect;
