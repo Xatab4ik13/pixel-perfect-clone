@@ -14,7 +14,7 @@ export function ConnectionGuide({ expanded = false }: { expanded?: boolean }) {
         <ol className="mt-3 space-y-4 border-l-2 border-primary/20 pl-4">
           {[
             ["Оплатите доступ", "Выберите тариф и завершите оплату."],
-            ["Подтвердите в Telegram", "Когда появится окно, нажмите «Подключить»."],
+            ["Подтвердите подключение", "Когда появится окно, нажмите «Подключить»."],
             ["Готово", "Возвращайтесь к переписке и наслаждайтесь общением."],
           ].map(([title, detail], index) => <li key={title} className="flex items-start gap-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sky text-xs font-bold text-primary">{index + 1}</span>

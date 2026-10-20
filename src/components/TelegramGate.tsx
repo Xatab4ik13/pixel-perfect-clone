@@ -1,4 +1,4 @@
-import plane from '@/assets/icon-plane.png';
+import plane from '@/assets/icon-key.png';
 import { Button } from '@/components/ui/button';
 import { useDemo } from '@/components/DemoProvider';
 

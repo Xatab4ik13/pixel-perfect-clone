@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import plane from "@/assets/icon-plane.png";
+import plane from "@/assets/icon-key.png";
 import tabHome from "@/assets/icon-home.png";
 import tabCalendar from "@/assets/icon-tab-calendar.png";
 import tabHelp from "@/assets/icon-tab-help.png";
@@ -58,7 +58,7 @@ export function Logo({ small }: { small?: boolean }) {
     <div className="flex flex-col items-center text-center">
       <img src={plane} alt="" width={256} height={256} className={small ? "h-16 w-16" : "h-24 w-24"} />
       <h1 className={`${small ? "text-3xl" : "text-[2.6rem] leading-none"} mt-2 font-extrabold tracking-tight`}>Лазейка</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Telegram без лишних сложностей</p>
+      <p className="mt-2 text-sm text-muted-foreground">Стабильное соединение без лишних сложностей</p>
     </div>
   );
 }

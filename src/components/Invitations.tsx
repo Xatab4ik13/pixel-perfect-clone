@@ -38,7 +38,7 @@ export function Invitations() {
 
   function share() {
     if (!link) return;
-    const text = 'Присоединяйся к Лазейке — стабильный Telegram без VPN.';
+    const text = 'Присоединяйся к Лазейке — стабильное соединение в одно нажатие.';
     const app = webApp();
     // Open Telegram's native "share to chat" dialog with our invite link.
     const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;
