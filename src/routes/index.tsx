@@ -14,10 +14,10 @@ import { DEMO_PLANS, type DemoPlan } from "@/lib/demo-access";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Лазейка — Telegram без лишних сложностей" },
-      { name: "description", content: "Стабильный доступ к Telegram в одно нажатие, без VPN и настроек." },
-      { property: "og:title", content: "Лазейка — Telegram без лишних сложностей" },
-      { property: "og:description", content: "Стабильный доступ к Telegram в одно нажатие, без VPN и настроек." },
+      { title: "Лазейка — стабильное соединение без лишних сложностей" },
+      { name: "description", content: "Персональный сервер для стабильного соединения в одно нажатие, без настроек." },
+      { property: "og:title", content: "Лазейка — стабильное соединение без лишних сложностей" },
+      { property: "og:description", content: "Персональный сервер для стабильного соединения в одно нажатие, без настроек." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
