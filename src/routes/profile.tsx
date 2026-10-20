@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { Check, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Check, ChevronRight, Receipt } from 'lucide-react';
 import { AppShell, IconImg, Logo } from '@/components/AppShell';
 import { AccessStatus } from '@/components/AccessStatus';
 import { useDemo } from '@/components/DemoProvider';
@@ -65,7 +66,7 @@ function Profile() {
                 {i < paid.length - 1 && <span className="absolute left-5 top-10 bottom-0 w-px bg-border" aria-hidden="true" />}
                 <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sky text-primary">
                   <Receipt className="h-5 w-5" aria-hidden="true" />
-                  <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-success text-success-foreground ring-2 ring-card"><Check className="h-2.5 w-2.5" aria-hidden="true" /></span>
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-success text-primary-foreground ring-2 ring-card"><Check className="h-2.5 w-2.5" aria-hidden="true" /></span>
                 </span>
                 <div className="min-w-0 flex-1">
                   <h3 className="text-sm font-bold">{planName(p.planId)}</h3>

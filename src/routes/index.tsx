@@ -67,7 +67,7 @@ function Index() {
 
       <HomeBenefits />
 
-      <Button asChild variant="ghost" className="mt-5 h-auto justify-start rounded-2xl bg-card p-4 shadow-soft">
+      <Button asChild variant="ghost" className="mt-4 h-[4.5rem] justify-start rounded-2xl bg-card px-4 shadow-soft">
         <Link to="/referrals">
           <IconImg src={giftIcon} className="h-10 w-10" />
           <span className="flex-1 text-left">
@@ -78,7 +78,7 @@ function Index() {
         </Link>
       </Button>
 
-      <Button asChild variant="ghost" className="mt-3 h-auto justify-start rounded-2xl bg-card p-4 shadow-soft">
+      <Button asChild variant="ghost" className="mt-3 h-[4.5rem] justify-start rounded-2xl bg-card px-4 shadow-soft">
         <Link to="/help">
           <IconImg src={headset} className="h-10 w-10" />
           <span className="flex-1 text-left font-bold">Помощь и поддержка</span>
